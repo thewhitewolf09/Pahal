@@ -1,7 +1,7 @@
 {
   "name": "pahal-server",
   "version": "1.0.0",
-  "description": "Shop Management App",
+  "description": "Tuition Management App",
   "main": "index.js",
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -14,8 +14,8 @@
     "npm": "^10.8.2"
   },
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js",
+    "dev": "nodemon index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sumit Nirmal",
