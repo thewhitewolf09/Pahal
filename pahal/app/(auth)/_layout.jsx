@@ -22,14 +22,8 @@ const AuthLayout = () => {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="sign-up"
-          options={{
-            headerShown: false,
-          }}
-        />
       </Stack>
-      <StatusBar backgroundColor="#468585" style="light" />
+      <StatusBar backgroundColor="#1C70EC" style="light" />
     </>
   );
 };

@@ -1,6 +1,8 @@
-import icons from "./icons";
 import images from "./images";
+import icons from "./icons";
 
-const BASE_URL = "http://localhost:8080/api"
+//baseURL: 'http://192.168.143.165:8080',
 
-export { icons, images, BASE_URL};
+const BASE_URL = "https://pahal-five.vercel.app";
+
+export { images, icons, BASE_URL };

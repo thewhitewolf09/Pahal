@@ -1,4 +1,11 @@
-import { SafeAreaView, ScrollView, View, Text, Image, StatusBar } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+  Image,
+  StatusBar,
+} from "react-native";
 import { useSelector } from "react-redux"; // Import useSelector from react-redux
 import { Redirect, router } from "expo-router";
 import { images } from "../constants";
@@ -15,7 +22,6 @@ const Welcome = () => {
 
   return (
     <SafeAreaView className="bg-white h-full">
-
       <ScrollView
         contentContainerStyle={{
           height: "100%",
@@ -24,37 +30,36 @@ const Welcome = () => {
         <View className="w-full flex justify-center items-center h-full px-4">
           <Image
             source={images.logo}
-            className="w-[130px] h-[84px]"
+            className="w-[220px] h-[95px]"
             resizeMode="contain"
           />
 
           <Image
-            source={images.cards}
+            source={images.institute}
             className="max-w-[380px] w-full h-[298px]"
             resizeMode="contain"
           />
 
-          <View className="relative mt-5">
-            <Text className="text-3xl text-black font-bold text-center">
-              Transform Your Shopping{"\n"}
-              Journey with{" "}
-              <Text className="text-teal-600">pahal</Text>
+          <View className="relative mt-6">
+            <Text className="text-3xl text-black font-bold text-center pt-4">
+              अपने शिक्षण अनुभव को{"\n"}
+              <Text className="text-blue-600">पहल</Text> के साथ बदलें
             </Text>
           </View>
 
           <Text className="text-sm font-pregular text-gray-600 mt-7 text-center">
-            Streamline Product Management, Boost Shop Efficiency
+            छात्रों के प्रदर्शन को ट्रैक करें, पढ़ाई को बनाएं अधिक प्रभावी
           </Text>
 
           <CustomButton
-            title="Get Started"
+            title="शुरू करे"
             handlePress={() => router.push("/sign-in")}
             containerStyles="w-full mt-7"
           />
         </View>
       </ScrollView>
 
-      <StatusBar backgroundColor="#468585" style="light" />
+      <StatusBar backgroundColor="#2563eb" style="light" />
     </SafeAreaView>
   );
 };

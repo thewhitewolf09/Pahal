@@ -5,13 +5,10 @@ import { composeWithDevTools } from "@redux-devtools/extension";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { combineReducers } from "redux";
 import userReducer from "./slices/userSlice";
-import productReducer from "./slices/productSlice";
-import customerReducer from "./slices/customerSlice";
-import saleReducer from "./slices/saleSlice";
-import cartReducer from "./slices/cartSlice";
-import orderReducer from "./slices/orderSlice";
-import paymentReducer from "./slices/paymentSlice";
-import notificationReducer from "./slices/notificationSlice"
+import parentReducer from "./slices/parentSlice";
+import studentReducer from "./slices/studentsSlice";
+import attendanceReducer from "./slices/attendanceSlice";
+import performanceReducer from "./slices/performanceSlice";
 
 // Redux persist configuration
 const persistConfig = {
@@ -23,13 +20,10 @@ const persistConfig = {
 // Combine reducers
 const rootReducer = combineReducers({
   user: userReducer,
-  product: productReducer,
-  customer: customerReducer,
-  sale: saleReducer,
-  cart: cartReducer,
-  order: orderReducer,
-  payment: paymentReducer,
-  notification: notificationReducer,
+  parent: parentReducer,
+  student: studentReducer,
+  attendance: attendanceReducer,
+  performance: performanceReducer,
 });
 
 // Persisted reducer

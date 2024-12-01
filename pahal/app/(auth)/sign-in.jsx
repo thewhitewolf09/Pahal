@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { Redirect, Link, router } from "expo-router";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   View,
@@ -15,94 +14,37 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { images } from "../../constants";
 import { CustomButton, FormField } from "../../components";
-import {
-  loginUser,
-  sendOtpUser,
-  verifyOtpUser,
-} from "../../redux/slices/userSlice";
-import { useNotifications } from "../../notification/notification";
+import { loginUser } from "../../redux/slices/userSlice";
+import { router } from "expo-router";
 
 const SignIn = () => {
   const dispatch = useDispatch();
-  const { loading, user, error } = useSelector((state) => state.user); // Redux state
+  const { loading, error } = useSelector((state) => state.user);
 
-  const [otpSent, setOtpSent] = useState(false);
-  const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     mobileNumber: "",
-    otp: "",
+    password: "",
+    role: "parent", // Default role is parent
   });
 
-  const { expoPushToken } = useNotifications();
-
-
-  const [timer, setTimer] = useState(15); // Resend OTP timer
-  const [canResend, setCanResend] = useState(false);
-
-  useEffect(() => {
-    let interval;
-    if (otpSent && timer > 0) {
-      interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-    } else if (timer === 0) {
-      setCanResend(true);
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [otpSent, timer]);
-
-  const handleRequestOtp = async () => {
-    if (form.mobileNumber === "") {
-      Alert.alert("Error", "Please enter your mobile number");
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      await dispatch(
-        loginUser({ mobile: form.mobileNumber, deviceToken: expoPushToken })
-      ).unwrap(); // Dispatch OTP request
-      Alert.alert("Success", "OTP sent to your mobile number");
-      setOtpSent(true);
-      setTimer(15); // Reset the timer for resending OTP
-      setCanResend(false);
-    } catch (error) {
-      Alert.alert("Error", error || "Failed to send OTP");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    if (!canResend) return;
-
-    try {
-      await dispatch(sendOtpUser(form.mobileNumber)).unwrap(); // Resend OTP
-      setTimer(15); // Reset the timer again
-      setCanResend(false);
-    } catch (error) {
-      Alert.alert("Error", error || "Failed to resend OTP");
-    }
-  };
-
   const handleSubmit = async () => {
-    if (form.mobileNumber === "" || (otpSent && form.otp === "")) {
-      Alert.alert("Error", "Please fill in all fields");
+    if (!form.mobileNumber || (form.role === "admin" && !form.password)) {
+      Alert.alert("त्रुटि", "कृपया सभी फ़ील्ड्स भरें।");
       return;
     }
 
-    setSubmitting(true);
     try {
       await dispatch(
-        verifyOtpUser({ mobile: form.mobileNumber, otp: form.otp })
+        loginUser({
+          role: form.role,
+          phone: form.mobileNumber,
+          password: form.role === "admin" ? form.password : undefined,
+        })
       ).unwrap();
-      router.replace("/home");
-      setOtpSent(false);
-    } catch (error) {
-      Alert.alert("Error", error || "Failed to login");
-    } finally {
-      setSubmitting(false);
+
+      router.replace("/home"); // Navigate to the home screen on success
+    } catch (err) {
+      Alert.alert("त्रुटि", err || "लॉगिन विफल रहा।");
     }
   };
 
@@ -126,86 +68,91 @@ const SignIn = () => {
               minHeight: Dimensions.get("window").height - 100,
             }}
           >
+            {/* App Logo */}
             <Image
               source={images.logo}
-              className="w-[130px] h-[84px] self-center"
+              className="w-[220px] h-[95px] self-center"
               resizeMode="contain"
             />
 
+            {/* Illustration */}
             <Image
-              source={images.cards}
+              source={images.institute}
               className="max-w-[380px] w-full h-[298px]"
               resizeMode="contain"
             />
 
+            {/* Login Title */}
             <Text className="text-2xl font-semibold text-black font-psemibold">
-              Log in to pahal
+              लॉग इन करें
             </Text>
 
             {/* Mobile Number Input */}
             <FormField
-              title="Mobile Number"
+              title="मोबाइल नंबर"
               value={form.mobileNumber}
               handleChangeText={(e) => setForm({ ...form, mobileNumber: e })}
               otherStyles="mt-7"
               keyboardType="phone-pad"
-              placeholder="Enter your mobile number"
+              placeholder="अपना मोबाइल नंबर दर्ज करें"
             />
 
-            {/* OTP Input (conditionally rendered) */}
-            {otpSent && (
+            {/* Conditional Password Input */}
+            {form.role === "admin" && (
               <FormField
-                title="OTP"
-                value={form.otp}
-                handleChangeText={(e) => setForm({ ...form, otp: e })}
-                otherStyles="mt-7"
-                keyboardType="numeric"
+                title="पासवर्ड"
+                value={form.password}
+                handleChangeText={(e) => setForm({ ...form, password: e })}
+                otherStyles="mt-4"
+                isPassword={true}
+                placeholder="अपना पासवर्ड दर्ज करें"
               />
             )}
 
-            {/* Button for requesting OTP or submitting */}
+            {/* Submit Button */}
             <CustomButton
-              title={otpSent ? "Submit OTP" : "Request OTP"}
-              handlePress={otpSent ? handleSubmit : handleRequestOtp}
+              title={"सबमिट करें"}
+              handlePress={handleSubmit}
               containerStyles="mt-7"
-              isLoading={isSubmitting}
+              isLoading={loading}
             />
 
-            {/* OTP Resend Logic */}
-            {otpSent && (
-              <View className="mt-3">
-                <Text style={{ textAlign: "center", marginBottom: 10 }}>
-                  {timer > 0
-                    ? `Resend OTP available in ${timer}s`
-                    : "Didn’t receive the OTP?"}
-                </Text>
-                {timer === 0 && (
-                  <TouchableOpacity onPress={handleResendOtp}>
-                    <Text
-                      style={{
-                        color: "teal",
-                        fontWeight: "bold",
-                        textAlign: "center",
-                        textDecorationLine: "underline",
-                      }}
-                    >
-                      Resend OTP
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            )}
-
+            {/* Sign-Up Suggestion */}
             <View className="flex justify-center pt-5 flex-row gap-2">
               <Text className="text-lg text-gray-100 font-pregular">
-                Don't have an account?
+                क्या आपके पास खाता नहीं है?
               </Text>
-              <Link
-                href="/sign-up"
-                className="text-lg font-psemibold text-teal-600"
+              <TouchableOpacity
+                onPress={() =>
+                  Alert.alert(
+                    "एडमिन से संपर्क करें",
+                    "फ़ोन नंबर: +91 7827374161"
+                  )
+                }
               >
-                Signup
-              </Link>
+                <Text className="text-lg font-psemibold text-blue-600">
+                  साइन अप करें
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Role Selection */}
+            <View className="flex justify-center items-center mt-6 flex-row gap-2">
+              <TouchableOpacity
+                onPress={() =>
+                  setForm({
+                    ...form,
+                    role: form.role === "parent" ? "admin" : "parent",
+                  })
+                }
+              >
+                <Text className="text-lg font-psemibold text-gray-600">
+                  {form.role === "parent" ? "मैं एक हूँ " : "मैं एक हूँ "}
+                  <Text className="font-semibold underline text-blue-600">
+                    {form.role === "parent" ? "एडमिन" : "पैरेंट"}
+                  </Text>
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>

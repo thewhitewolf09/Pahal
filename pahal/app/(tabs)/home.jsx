@@ -1,16 +1,13 @@
-import {useSelector } from "react-redux";
-import CustomerHome from "../home/CustomerHome";
-import ShopOwnerHome from "../home/ShopOwnerHome";
+import { useSelector } from "react-redux";
+import { Text, View } from "react-native";
 
 const Home = () => {
-  const { user } = useSelector((state) => state.user);
+  const { user, token, role } = useSelector((state) => state.user);
   return (
     <>
-      {user.role === "customer" ? (
-        <CustomerHome user={user} />
-      ) : (
-        <ShopOwnerHome user={user} />
-      )}
+      <View>
+        <Text>Hi</Text>
+      </View>
     </>
   );
 };

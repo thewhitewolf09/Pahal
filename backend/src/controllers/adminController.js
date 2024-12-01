@@ -5,14 +5,14 @@ import Admin from "../models/admin.js";
 // Create a new admin
 export const createAdmin = async (req, res) => {
   try {
-    const { name, mobile, password, role } = req.body;
+    const { name, phone, password, role } = req.body;
 
-    // Check if the mobile number already exists
-    const existingAdmin = await Admin.findOne({ mobile });
+    // Check if the phone number already exists
+    const existingAdmin = await Admin.findOne({ phone });
     if (existingAdmin) {
       return res
         .status(400)
-        .json({ message: "Mobile number already registered." });
+        .json({ message: "phone number already registered." });
     }
 
     // Hash the password
@@ -22,7 +22,7 @@ export const createAdmin = async (req, res) => {
     // Create and save the new admin
     const newAdmin = new Admin({
       name,
-      mobile,
+      phone,
       password: hashedPassword,
       role,
     });
@@ -37,11 +37,10 @@ export const createAdmin = async (req, res) => {
 // Admin login
 export const loginAdmin = async (req, res) => {
   try {
-    const { mobile, password } = req.body;
+    const { phone, password } = req.body;
 
-    // Find admin by mobile
-    const admin = await Admin.findOne({ mobile });
-
+    // Find admin by phone
+    const admin = await Admin.findOne({ phone });
 
     if (!admin) {
       return res.status(404).json({ message: "Admin not found." });
@@ -53,19 +52,14 @@ export const loginAdmin = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials." });
     }
 
-
-
     // Generate a JWT
     const token = jwt.sign(
       { id: admin._id, role: admin.role },
-      process.env.JWT_SECRET_KEY, 
+      process.env.JWT_SECRET_KEY,
       { expiresIn: "1d" }
     );
 
-    console.log(token)
-
-
-    res.status(200).json({ message: "Login successful.", token });
+    res.status(200).json({ message: "Login successful.", admin, token });
   } catch (error) {
     res.status(500).json({ message: "Error logging in.", error });
   }

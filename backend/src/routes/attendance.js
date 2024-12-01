@@ -6,22 +6,23 @@ import {
   getAttendanceByStudent,
   updateAttendance,
 } from "../controllers/attendanceController.js";
+import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // Add Attendance
-router.post("/", addAttendance);
+router.post("/",protect, addAttendance);
 
 // Get Attendance by Date
-router.get("/date/:date", getAttendanceByDate);
+router.get("/date/:date",protect, getAttendanceByDate);
 
 // Get Attendance by Student
-router.get("/student/:student_id", getAttendanceByStudent);
+router.get("/student/:student_id",protect, getAttendanceByStudent);
 
 // Update Attendance
-router.patch("/:id", updateAttendance);
+router.patch("/:id",protect, updateAttendance);
 
 // Delete Attendance
-router.delete("/:id", deleteAttendance);
+router.delete("/:id",protect, deleteAttendance);
 
 export default router;

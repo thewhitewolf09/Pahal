@@ -1,8 +1,8 @@
 import axios from "axios";
+import { BASE_URL } from "../constants";
 
 const api = axios.create({
-  //baseURL: 'http://192.168.143.165:8080',
-  baseURL: "https://pahal-blond.vercel.app",
+  baseURL: BASE_URL,
 });
 
 export default api;
