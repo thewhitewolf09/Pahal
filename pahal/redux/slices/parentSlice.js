@@ -113,12 +113,63 @@ export const fetchParentById = createAsyncThunk(
   }
 );
 
+// Send Reminder to a Single Parent
+export const sendReminder = createAsyncThunk(
+  "parent/sendReminder",
+  async (parentId, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = getToken(state);
+
+    try {
+      const response = await api.post(
+        `/api/parent/send-reminder`,
+        { parentId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data.reminder; // Return reminder details
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Failed to send reminder.";
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+ 
+
+// Notify All Parents
+export const notifyAllParents = createAsyncThunk(
+  "parent/notifyAllParents",
+  async (_, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = getToken(state);
+
+    try {
+      const response = await api.post("/api/parent/notify-all", {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.results; // Return the notification results
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Failed to notify all parents.";
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+
 // Parent Slice
 const parentSlice = createSlice({
   name: "parent",
   initialState: {
     parent: null,
     parents: [],
+    reminders: [],
     loading: false,
     error: null,
   },
@@ -202,6 +253,34 @@ const parentSlice = createSlice({
         state.parent = action.payload;
       })
       .addCase(fetchParentById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Handle Send Reminder
+      .addCase(sendReminder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(sendReminder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.reminders.push(action.payload);
+      })
+      .addCase(sendReminder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Handle Notify All Parents
+      .addCase(notifyAllParents.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(notifyAllParents.fulfilled, (state, action) => {
+        state.loading = false;
+        state.reminders = action.payload; // Save notification results
+      })
+      .addCase(notifyAllParents.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

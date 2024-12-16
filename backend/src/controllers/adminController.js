@@ -39,6 +39,9 @@ export const loginAdmin = async (req, res) => {
   try {
     const { phone, password } = req.body;
 
+    
+
+
     // Find admin by phone
     const admin = await Admin.findOne({ phone });
 

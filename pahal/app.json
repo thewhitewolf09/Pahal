@@ -11,6 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "newArchEnabled": true,
     "scheme": "pahal",
     "assetBundlePatterns": [
       "**/*"
@@ -37,7 +38,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "eeaca95a-6748-42c2-9c1e-e60db755ffa9"
+        "projectId": "4143265b-b0cf-4749-860a-2be2e11268b3"
       }
     },
     "owner": "sumitnirmal"

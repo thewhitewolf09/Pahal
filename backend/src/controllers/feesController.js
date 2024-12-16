@@ -38,7 +38,6 @@ export const getAllFees = async (req, res) => {
     const fees = await Fees.find()
       .populate("student_id", "name class")
       .sort({ due_date: -1 });
-
     res.status(200).json({
       message: "Fees records fetched successfully",
       fees,
@@ -51,18 +50,31 @@ export const getAllFees = async (req, res) => {
   }
 };
 
-// Get Fees by Student ID
-export const getFeesByStudent = async (req, res) => {
-  const { studentId } = req.params;
+// Get Fees by Parent ID
+export const getFeesByParent = async (req, res) => {
+  const { parentId } = req.params;
 
   try {
-    const fees = await Fees.find({ student_id: studentId })
+    // Find all students associated with the given parentId
+    const students = await Student.find({ parent_id: parentId });
+
+    if (!students || students.length === 0) {
+      return res.status(404).json({
+        message: "No students found for this parent",
+      });
+    }
+
+    // Extract student_ids from the found students
+    const studentIds = students.map(student => student._id);
+
+    // Fetch fees for all students associated with this parent
+    const fees = await Fees.find({ student_id: { $in: studentIds } })
       .populate("student_id", "name class")
       .sort({ due_date: -1 });
 
-    if (!fees) {
+    if (!fees || fees.length === 0) {
       return res.status(404).json({
-        message: "No fee records found for this student",
+        message: "No fee records found for these students",
       });
     }
 
@@ -78,6 +90,7 @@ export const getFeesByStudent = async (req, res) => {
   }
 };
 
+
 // Update Fee Status (Paid)
 export const updateFeeStatus = async (req, res) => {
   const { id } = req.params;
@@ -88,7 +101,7 @@ export const updateFeeStatus = async (req, res) => {
       id,
       { status, payment_date, transaction_id },
       { new: true }
-    );
+    ).populate("student_id", "name class");
 
     if (!fee) {
       return res.status(404).json({ message: "Fee record not found" });

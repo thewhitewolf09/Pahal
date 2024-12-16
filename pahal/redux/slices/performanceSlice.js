@@ -86,8 +86,10 @@ export const updatePerformance = createAsyncThunk(
           },
         }
       );
+
       return response.data.performance;
     } catch (error) {
+      console.error(error);
       const errorMessage =
         error.response?.data?.message || "Failed to update performance.";
       return rejectWithValue(errorMessage);
@@ -140,7 +142,7 @@ const performanceSlice = createSlice({
       })
       .addCase(addPerformance.fulfilled, (state, action) => {
         state.loading = false;
-        state.performanceRecords.push(action.payload);
+        state.performanceRecords = action.payload;
       })
       .addCase(addPerformance.rejected, (state, action) => {
         state.loading = false;
@@ -186,7 +188,7 @@ const performanceSlice = createSlice({
           (record) => record._id === action.payload._id
         );
         if (index !== -1) {
-          state.performanceRecords[index] = action.payload;
+          state.performanceRecords.splice(index, 1, action.payload); 
         }
       })
       .addCase(updatePerformance.rejected, (state, action) => {

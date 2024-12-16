@@ -11,7 +11,6 @@ const StudentSchema = new mongoose.Schema(
     class: {
       type: String,
       required: true,
-      match: /^[0-9]{1,2}[A-Z]?$/, 
     },
     parent_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,6 +21,10 @@ const StudentSchema = new mongoose.Schema(
       type: String,
       maxlength: 500, 
       default: null,
+    },
+    accommodation: {
+      type: Boolean,
+      default: false,
     },
   },
   {

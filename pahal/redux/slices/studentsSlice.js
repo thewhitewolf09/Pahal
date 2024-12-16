@@ -97,7 +97,6 @@ export const fetchStudentById = createAsyncThunk(
   async (id, { getState, rejectWithValue }) => {
     const state = getState();
     const token = getToken(state);
-
     try {
       const response = await api.get(`/api/student/${id}`, {
         headers: {

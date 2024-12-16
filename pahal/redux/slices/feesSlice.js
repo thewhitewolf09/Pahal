@@ -48,18 +48,20 @@ export const fetchAllFees = createAsyncThunk(
 );
 
 // Fetch Fees by Student ID
-export const fetchFeesByStudent = createAsyncThunk(
-  "fees/fetchByStudent",
-  async (studentId, { getState, rejectWithValue }) => {
+export const fetchFeesByParent = createAsyncThunk(
+  "fees/fetchFeesByParent",
+  async (parentId, { getState, rejectWithValue }) => {
     const state = getState();
     const token = getToken(state);
 
     try {
-      const response = await api.get(`/api/fees/${studentId}`, {
+      const response = await api.get(`/api/fees/${parentId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      
       return response.data.fees;
     } catch (error) {
       const errorMessage =
@@ -144,7 +146,7 @@ const feesSlice = createSlice({
   name: "fees",
   initialState: {
     feesRecords: [],
-    feesByStudent: [],
+    feesByParent: [],
     pendingFees: [],
     loading: false,
     error: null,
@@ -185,15 +187,15 @@ const feesSlice = createSlice({
       })
 
       // Fetch Fees by Student
-      .addCase(fetchFeesByStudent.pending, (state) => {
+      .addCase(fetchFeesByParent.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchFeesByStudent.fulfilled, (state, action) => {
+      .addCase(fetchFeesByParent.fulfilled, (state, action) => {
         state.loading = false;
-        state.feesByStudent = action.payload;
+        state.feesByParent = action.payload;
       })
-      .addCase(fetchFeesByStudent.rejected, (state, action) => {
+      .addCase(fetchFeesByParent.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

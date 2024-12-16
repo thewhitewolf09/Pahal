@@ -9,6 +9,8 @@ import parentReducer from "./slices/parentSlice";
 import studentReducer from "./slices/studentsSlice";
 import attendanceReducer from "./slices/attendanceSlice";
 import performanceReducer from "./slices/performanceSlice";
+import feesReducer from "./slices/feesSlice"
+import paymentReducer from "./slices/paymentSlice"
 
 // Redux persist configuration
 const persistConfig = {
@@ -24,6 +26,8 @@ const rootReducer = combineReducers({
   student: studentReducer,
   attendance: attendanceReducer,
   performance: performanceReducer,
+  fees: feesReducer,
+  payment: paymentReducer
 });
 
 // Persisted reducer

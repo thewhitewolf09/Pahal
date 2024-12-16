@@ -1,15 +1,13 @@
 import { Redirect, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-
-import { Loader } from "../../components";
 import { useSelector } from "react-redux";
 
 const AuthLayout = () => {
-  const { loading, user, verified } = useSelector((state) => state.user);
+  const { loading, user } = useSelector((state) => state.user);
 
   const isLogged = user !== null;
 
-  if (!loading && isLogged && verified) {
+  if (!loading && isLogged) {
     return <Redirect href="/home" />;
   }
 

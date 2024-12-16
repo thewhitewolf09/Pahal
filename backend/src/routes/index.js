@@ -5,6 +5,7 @@ import parent from "./parent.js";
 import student from "./student.js";
 import performance from "./performance.js";
 import fees from "./fees.js";
+import payment from "./payment.js";
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.use("/parent", parent);
 router.use("/student", student);
 router.use("/performance", performance);
 router.use("/fees", fees);
+router.use("/payment", payment);
 
 export default router;

@@ -2,16 +2,20 @@ import Performance from "../models/performance.js";
 
 // Add Performance
 export const addPerformance = async (req, res) => {
-  const { student_id, test_date, subject, marks } = req.body;
+  const { student_id, marks } = req.body;
+
+
+  const today = new Date();
 
   try {
     const performance = new Performance({
       student_id,
-      test_date,
-      subject,
+      test_date: today,
       marks,
     });
 
+
+    
     await performance.save();
     res.status(201).json({
       message: "Performance added successfully",
@@ -79,7 +83,7 @@ export const updatePerformance = async (req, res) => {
       id,
       { marks },
       { new: true }
-    );
+    ).populate("student_id", "name class");
 
     if (!performance) {
       return res.status(404).json({

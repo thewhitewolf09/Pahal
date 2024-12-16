@@ -72,22 +72,19 @@ export const fetchAttendanceByStudent = createAsyncThunk(
 // Update Attendance
 export const updateAttendance = createAsyncThunk(
   "attendance/update",
-  async ({ id, status }, { getState, rejectWithValue }) => {
+  async (attendanceData, { getState, rejectWithValue }) => {
     const state = getState();
     const token = getToken(state);
-
+    console.log("hi")
     try {
-      const response = await api.patch(
-        `/api/attendance/${id}`,
-        { status },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await api.patch(`/api/attendance`, attendanceData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data.attendance;
     } catch (error) {
+      console.error(error)
       const errorMessage =
         error.response?.data?.message || "Failed to update attendance.";
       return rejectWithValue(errorMessage);
@@ -141,7 +138,7 @@ const attendanceSlice = createSlice({
       })
       .addCase(addAttendance.fulfilled, (state, action) => {
         state.loading = false;
-        state.attendanceRecords.push(action.payload);
+        state.attendanceRecords = action.payload;
       })
       .addCase(addAttendance.rejected, (state, action) => {
         state.loading = false;
@@ -183,12 +180,7 @@ const attendanceSlice = createSlice({
       })
       .addCase(updateAttendance.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.attendanceRecords.findIndex(
-          (record) => record._id === action.payload._id
-        );
-        if (index !== -1) {
-          state.attendanceRecords[index] = action.payload;
-        }
+        state.attendanceRecords= action.payload
       })
       .addCase(updateAttendance.rejected, (state, action) => {
         state.loading = false;

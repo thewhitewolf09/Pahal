@@ -7,14 +7,14 @@ import Icon from "react-native-vector-icons/Ionicons"; // Use Ionicons or other 
 
 const TabIcon = ({ iconName, color, name, focused }) => {
   return (
-    <View style={{ alignItems: "center", justifyContent: "center", gap: 2 }}>
+    <View style={{ alignItems: "center", justifyContent: "center", gap: 1 ,width : 40}}>
       {/* Use the Ionicons icon with vector icons */}
-      <Icon name={iconName} size={24} color={color} />
+      <Icon name={iconName} size={30} color={color} style={{ opacity: 1 }} />
       {/* Text component for the label */}
       <Text
         style={{
           color: color,
-          fontSize: 12,
+          fontSize: 10,
           fontWeight: focused ? "600" : "400",
         }}
       >
@@ -25,34 +25,107 @@ const TabIcon = ({ iconName, color, name, focused }) => {
 };
 
 const TabLayout = () => {
-  const { loading, user, verified } = useSelector((state) => state.user);
+  const { loading, user } = useSelector((state) => state.user);
 
-  if (!loading && !user && verified) return <Redirect href="/sign-in" />;
+  if (!loading && !user) return <Redirect href="/sign-in" />;
 
   return (
     <>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: "#468585",
+          tabBarActiveTintColor: "#2563eb",
           tabBarInactiveTintColor: "#BDC3C7",
           tabBarShowLabel: false,
           tabBarStyle: {
             backgroundColor: "white",
-            height: 84,
+            height: 72, // Adjusted tab bar height
+            paddingBottom: 10,
+            paddingTop: 14,
+          },
+          tabBarIconStyle: {
+            opacity: 1, // Force opacity to 1 for inactive icons
           },
         }}
       >
-        {/* Common Tabs for Both Roles */}
+        {/* Home Tab */}
         <Tabs.Screen
           name="home"
           options={{
-            title: "Home",
+            title: "होम पेज",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 iconName="home-outline"
                 color={color}
-                name="Home"
+                name="होम पेज"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
+        {/* Attendance Tab */}
+        <Tabs.Screen
+          name="attendance"
+          options={{
+            title: "उपस्थिति",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                iconName="calendar-outline"
+                color={color}
+                name="उपस्थिति"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
+        {/* Performance Tab */}
+        <Tabs.Screen
+          name="performance"
+          options={{
+            title: "प्रदर्शन",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                iconName="bar-chart-outline"
+                color={color}
+                name="प्रदर्शन"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
+        {/* Fees Tab */}
+        <Tabs.Screen
+          name="fees"
+          options={{
+            title: "फीस",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                iconName="cash-outline"
+                color={color}
+                name="फीस"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
+        {/* Settings Tab */}
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: "सेटिंग्स",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                iconName="settings-outline"
+                color={color}
+                name="सेटिंग्स"
                 focused={focused}
               />
             ),
@@ -60,8 +133,8 @@ const TabLayout = () => {
         />
       </Tabs>
 
-      {/* These components should be outside of Tabs */}
-      <StatusBar backgroundColor="#468585" style="light" />
+      {/* Status Bar */}
+      <StatusBar backgroundColor="#2563eb" style="light" />
     </>
   );
 };

@@ -20,7 +20,7 @@ router.get("/date/:date",protect, getAttendanceByDate);
 router.get("/student/:student_id",protect, getAttendanceByStudent);
 
 // Update Attendance
-router.patch("/:id",protect, updateAttendance);
+router.patch("/",protect, updateAttendance);
 
 // Delete Attendance
 router.delete("/:id",protect, deleteAttendance);

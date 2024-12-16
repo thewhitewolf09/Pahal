@@ -12,7 +12,6 @@ export const loginUser = createAsyncThunk(
 
       const response = await api.post(endpoint, credentials);
 
-      console.log(response.data);
       return {
         user: response.data[role], // "admin" or "parent" key in the response
         token: response.data.token,

@@ -36,6 +36,8 @@ const RootLayout = () => {
     return null; // Show nothing until fonts are loaded
   }
 
+  
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -44,6 +46,15 @@ const RootLayout = () => {
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="parent/add-parent" options={{ headerShown: false }} />
+            <Stack.Screen name="parent/edit-parent" options={{ headerShown: false }} />
+            <Stack.Screen name="parent/parent-list" options={{ headerShown: false }} />
+            <Stack.Screen name="parent/parent-details" options={{ headerShown: false }} />
+            <Stack.Screen name="student/add-student" options={{ headerShown: false }} />
+            <Stack.Screen name="student/student-list" options={{ headerShown: false }} />
+            <Stack.Screen name="student/student-fee-details" options={{ headerShown: false }} />
+            <Stack.Screen name="student/student-details" options={{ headerShown: false }} />
+            <Stack.Screen name="student/edit-student" options={{ headerShown: false }} />
           </Stack>
         </GestureHandlerRootView>
         <StatusBar backgroundColor="#2563eb" style="light" />

@@ -4,8 +4,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 
 const SearchInput = ({
   initialQuery,
-  products = [],
-  customers = [],
+  students = [],
+  parents = [],
   setFilteredResults = () => {}, // Default empty function to prevent errors
   placeholder,
 }) => {
@@ -17,43 +17,38 @@ const SearchInput = ({
       if (query !== "") {
         const searchQuery = query.toLowerCase();
 
-        // Filter products based on name
-        const filteredProducts = products.filter((product) =>
-          product.name.toLowerCase().includes(searchQuery)
+        // Filter students based on name
+        const filteredStudents = students.filter((student) =>
+          student.name.toLowerCase().includes(searchQuery)
         );
 
-        // Filter customers based on name, mobile, or other relevant fields
-        const filteredCustomers = customers.filter(
-          (customer) =>
-            customer.name.toLowerCase().includes(searchQuery) ||
-            customer.mobile.includes(searchQuery) || // Search by mobile number
-            (customer.address && customer.address.city.toLowerCase().includes(searchQuery)) || // Search by city
-            (customer.address && customer.address.state.toLowerCase().includes(searchQuery)) || // Search by state
-            (customer.address && customer.address.country.toLowerCase().includes(searchQuery)) // Search by country
+        // Filter parents based on name
+        const filteredParents = parents.filter((parent) =>
+          parent.name.toLowerCase().includes(searchQuery)
         );
 
         // Combine filtered products and customers into a single result list
-        setFilteredResults([...filteredProducts, ...filteredCustomers]);
+        setFilteredResults([...filteredStudents, ...filteredParents]);
       } else {
         // If query is empty, clear the results
-        setFilteredResults([...customers, ...products]);
+        setFilteredResults([...students, ...parents]);
       }
     }, 300); // Debounce time of 300ms to delay the search
 
     return () => clearTimeout(timeoutId); // Cleanup timeout on unmount or query change
-  }, [query, products, customers, setFilteredResults]);
+  }, [query, students, setFilteredResults]);
 
   return (
-    <View className="flex flex-row items-center space-x-4 w-full h-16 px-4 mb-3 bg-white rounded-2xl border-2 border-teal-600 focus:border-secondary">
+    <View className="flex flex-row items-center space-x-4 w-full h-16 px-4 mb-3 bg-white rounded-2xl border-2 border-blue-600 focus:border-secondary">
       <TextInput
         className="text-base mt-0.5 text-gray flex-1 font-semibold font-pregular"
         value={query}
-        placeholder={placeholder || "Search a Product or Customer"}
+        placeholder={placeholder || "Search a Parents or Students"}
         placeholderTextColor="gray"
         onChangeText={(text) => setQuery(text)} // Update the query state
       />
 
-      <Icon name="search" size={24} color="#50B498" />
+      <Icon name="search" size={24} color="#1d4ed8" />
     </View>
   );
 };

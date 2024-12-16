@@ -3,10 +3,13 @@ import cors from "cors";
 import routes from "./src/routes/index.js";
 import mongoose from "mongoose";
 import { config } from "dotenv";
+import "./src/cronJobs/addMonthlyFees.js";
+import "./src/cronJobs/feeReminder.js"
 
 const app = express();
 
 config();
+
 
 // MONGO DB connection
 await mongoose
@@ -15,7 +18,7 @@ await mongoose
     console.log("Mongodb Connection Successfull");
   })
   .catch((err) => {
-    console.log(err);
+    console.error("Error connecting to MongoDB:", err.message);
   });
 
 const corsOptions = {
