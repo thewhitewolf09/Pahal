@@ -3,7 +3,8 @@ import Fees from "../models/fees.js";
 import Student from "../models/student.js";
 
 export const processPayment = async (req, res) => {
-  const { parent_id, amountPaid } = req.body;
+  const { parent_id, amountPaid, transactionId } = req.body;
+  
   if (!parent_id || !amountPaid) {
     return res
       .status(400)
@@ -11,10 +12,10 @@ export const processPayment = async (req, res) => {
   }
 
   try {
-    // Generate transaction ID in format TXN-time-1000
+    // Use provided transactionId or generate a new one
     const currentTimestamp = Date.now(); // Get the current time in milliseconds
     const randomSuffix = Math.floor(1000 + Math.random() * 9000); // Generate a random 4-digit number
-    const transactionId = `TXN-${currentTimestamp}-${randomSuffix}`;
+    const finalTransactionId = transactionId || `TXN-${currentTimestamp}-${randomSuffix}`;
 
     // Fetch students associated with the parent
     const students = await Student.find({ parent_id });
@@ -44,9 +45,10 @@ export const processPayment = async (req, res) => {
           fee.status = "Paid";
           fee.payment_date = currentPaymentDate;
         } else {
-          remainingAmount = 0;
+          fee.amount -= remainingAmount; // Deduct the remaining amount
           fee.status = "Partial";
           fee.payment_date = currentPaymentDate;
+          remainingAmount = 0;
         }
 
         await fee.save();
@@ -60,7 +62,7 @@ export const processPayment = async (req, res) => {
       parent_id,
       amount_paid: amountPaid,
       payment_date: currentPaymentDate,
-      transaction_id: transactionId,
+      transaction_id: finalTransactionId,
     });
     await payment.save();
 
@@ -75,6 +77,7 @@ export const processPayment = async (req, res) => {
     });
   }
 };
+
 
 export const getPaymentHistoryByParent = async (req, res) => {
   const { parentId } = req.params;
