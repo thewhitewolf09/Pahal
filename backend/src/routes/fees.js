@@ -6,6 +6,7 @@ import {
   deleteFee,
   getPendingFees,
   getFeesByParent,
+  getMonthlyFeesSummary,
 } from "../controllers/feesController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 
@@ -16,6 +17,9 @@ router.post("/", protect, addFee);
 
 // Get Pending Fees (for reminders)
 router.get("/pending",protect, getPendingFees);
+
+// Get Monthly Fees Summary
+router.get("/summery/monthly",getMonthlyFeesSummary);
 
 // Get All Fees
 router.get("/",protect, getAllFees);

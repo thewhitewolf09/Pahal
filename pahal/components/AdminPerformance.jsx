@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  RefreshControl,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,8 +20,7 @@ import {
   updatePerformance,
 } from "../redux/slices/performanceSlice";
 import { fetchAllStudents } from "../redux/slices/studentsSlice";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { router } from "expo-router";
+import { useFocusEffect } from "expo-router";
 
 const AdminPerformance = () => {
   const dispatch = useDispatch();
@@ -28,16 +28,10 @@ const AdminPerformance = () => {
   const [editingStudentId, setEditingStudentId] = useState(null);
   const [newResults, setNewResults] = useState({});
   const [editMarks, setEditMarks] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
   const { students } = useSelector((state) => state.student);
   const { performanceRecords } = useSelector((state) => state.performance);
-
-  console.log(students)
-
-  useEffect(() => {
-    dispatch(fetchAllStudents());
-    dispatch(fetchAllPerformance());
-  }, [dispatch]);
 
   const groupStudentsByClass = () =>
     students.reduce((acc, student) => {
@@ -94,6 +88,20 @@ const AdminPerformance = () => {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    dispatch(fetchAllStudents());
+    dispatch(fetchAllPerformance());
+    setRefreshing(false);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchAllStudents());
+      dispatch(fetchAllPerformance());
+    }, [dispatch])
+  );
+
   return (
     <SafeAreaView className="bg-white h-full">
       {/* Keyboard Avoiding View for proper input handling on mobile */}
@@ -101,7 +109,12 @@ const AdminPerformance = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView className="flex flex-col my-3 px-4 space-y-6">
+        <ScrollView
+          className="flex flex-col my-3 px-4 space-y-6"
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           {/* Header */}
           <View className="flex justify-between items-start flex-row mb-6">
             <Text className="text-2xl font-semibold text-blue-700">

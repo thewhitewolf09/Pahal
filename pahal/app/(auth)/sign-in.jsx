@@ -42,7 +42,7 @@ const SignIn = () => {
         })
       ).unwrap();
 
-      router.replace("/home"); // Navigate to the home screen on success
+      router.push("/home"); // Navigate to the home screen on success
     } catch (err) {
       Alert.alert("त्रुटि", err || "लॉगिन विफल रहा।");
     }

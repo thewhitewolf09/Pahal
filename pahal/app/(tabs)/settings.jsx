@@ -6,13 +6,21 @@ import { LinearGradient } from "expo-linear-gradient";
 import { logout } from "../../redux/slices/userSlice";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons"; // Assuming you're using FontAwesome for the edit icon
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
-
+import { fetchParentById } from "../../redux/slices/parentSlice";
+ 
 const Settings = () => {
   const dispatch = useDispatch();
   const { user, role } = useSelector((state) => state.user);
+  const { parent } = useSelector((state) => state.parent);
   const [isMapExpanded, setIsMapExpanded] = useState(false);
+
+  useEffect(() => {
+    if (role === "parent") {
+      dispatch(fetchParentById(user._id));
+    }
+  }, [user._id]);
 
   const [details, setDetails] = useState({
     name: "श्‍वेता नवोदय प्रवेश संस्थान",
@@ -35,16 +43,14 @@ const Settings = () => {
   const handleLogout = () => {
     Alert.alert("लॉग आउट", "आप लॉग आउट हो चुके हैं।");
     dispatch(logout());
-    router.replace("/sign-in");
+    router.push("/sign-in");
   };
 
   const contactSupport = () => {
     Linking.openURL(
-      `mailto:sumitramprakashnirmal@gmail.com?subject=Help Request(Pahal) from ${user.name}`
+      `mailto:sumitramprakashnirmal@gmail.com?subject=Help Request(Pahal) from ${user?.name}`
     );
   };
-
-
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -79,27 +85,60 @@ const Settings = () => {
                 <FontAwesome name="edit" size={28} color="#2563eb" />
               </TouchableOpacity>
             ) : null}
-
-            <View className="flex flex-row items-center">
-              <Ionicons name="person-circle" size={60} color="#2563eb" />
-              <View className="ml-4 flex-1">
-                <Text className="text-xl font-semibold text-gray-800">
-                  {user.name}
-                </Text>
-                {/* Phone Number with Phone Icon */}
-                <View className="flex flex-row items-center mt-2">
-                  <Ionicons name="phone-portrait" size={24} color="#4F8A8B" />
-                  <Text className="text-gray-600 ml-2">{user.phone}</Text>
-                </View>
-                {/* WhatsApp Number with WhatsApp Icon */}
-                {role === "parent" && user.whatsapp && (
-                  <View className="flex flex-row items-center mt-2">
-                    <Ionicons name="logo-whatsapp" size={24} color="#25D366" />
-                    <Text className="text-gray-600 ml-2">{user.whatsapp}</Text>
+            {role === "parent" ? (
+              <>
+                <View className="flex flex-row items-center">
+                  <Ionicons name="person-circle" size={60} color="#2563eb" />
+                  <View className="ml-4 flex-1">
+                    <Text className="text-xl font-semibold text-gray-800">
+                      {parent?.name}
+                    </Text>
+                    {/* Phone Number with Phone Icon */}
+                    <View className="flex flex-row items-center mt-2">
+                      <Ionicons
+                        name="phone-portrait"
+                        size={24}
+                        color="#4F8A8B"
+                      />
+                      <Text className="text-gray-600 ml-2">
+                        {parent?.phone}
+                      </Text>
+                    </View>
+                    {/* WhatsApp Number with WhatsApp Icon */}
+                    <View className="flex flex-row items-center mt-2">
+                      <Ionicons
+                        name="logo-whatsapp"
+                        size={24}
+                        color="#25D366"
+                      />
+                      <Text className="text-gray-600 ml-2">
+                        {parent?.whatsapp}
+                      </Text>
+                    </View>
                   </View>
-                )}
-              </View>
-            </View>
+                </View>
+              </>
+            ) : (
+              <>
+                <View className="flex flex-row items-center">
+                  <Ionicons name="person-circle" size={60} color="#2563eb" />
+                  <View className="ml-4 flex-1">
+                    <Text className="text-xl font-semibold text-gray-800">
+                      {user?.name}
+                    </Text>
+                    {/* Phone Number with Phone Icon */}
+                    <View className="flex flex-row items-center mt-2">
+                      <Ionicons
+                        name="phone-portrait"
+                        size={24}
+                        color="#4F8A8B"
+                      />
+                      <Text className="text-gray-600 ml-2">{user.phone}</Text>
+                    </View>
+                  </View>
+                </View>
+              </>
+            )}
           </LinearGradient>
         </View>
 
@@ -118,8 +157,10 @@ const Settings = () => {
                 marginBottom: 40,
               }}
               region={{
-                latitude: details.googleMapLocation?.latitude || 26.550039671658247,
-                longitude: details.googleMapLocation?.longitude || 82.04865485668407,
+                latitude:
+                  details.googleMapLocation?.latitude || 26.550039671658247,
+                longitude:
+                  details.googleMapLocation?.longitude || 82.04865485668407,
                 latitudeDelta: isMapExpanded ? 0.002 : 0.01,
                 longitudeDelta: isMapExpanded ? 0.002 : 0.01,
               }}
@@ -133,7 +174,7 @@ const Settings = () => {
                   latitude: details.googleMapLocation?.latitude,
                   longitude: details.googleMapLocation?.longitude,
                 }}
-                title={details.name}
+                title={details?.name}
                 description={`${details.address.street}, ${details.address.city},${details.address.state}, ${details.address.country}`}
               />
             </MapView>
@@ -184,7 +225,9 @@ const Settings = () => {
           </Text>
 
           <TouchableOpacity
-            onPress={() => Linking.openURL("https://forms.gle/pU2cLf9WC6om6v1r8")}
+            onPress={() =>
+              Linking.openURL("https://forms.gle/pU2cLf9WC6om6v1r8")
+            }
             className="bg-blue-600 py-3 px-6 rounded-full shadow-lg flex flex-row items-center justify-center"
           >
             <Ionicons

@@ -39,9 +39,9 @@ const ParentDetailScreen = () => {
 
   const fetchParentDetails = async (id) => {
     try {
-      await dispatch(fetchParentById(id)).unwrap();
-      await dispatch(fetchFeesByParent(id)).unwrap();
-      await dispatch(fetchPaymentHistory(id)).unwrap();
+      await dispatch(fetchParentById(id));
+      await dispatch(fetchFeesByParent(id));
+      await dispatch(fetchPaymentHistory(id));
     } catch (error) {
       console.error("Failed to fetch parent details:", error);
     }

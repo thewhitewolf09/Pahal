@@ -4,12 +4,19 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "expo-router";
 import { images } from "../constants";
+import { useEffect } from "react";
+import { fetchParentById } from "../redux/slices/parentSlice";
 
 const ParentHome = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
+  const { user, role } = useSelector((state) => state.user);
+  const { parent } = useSelector((state) => state.parent);
 
-  console.log(user);
+  useEffect(() => {
+    if (role === "parent") {
+      dispatch(fetchParentById(user._id));
+    }
+  }, [user._id]);
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -21,7 +28,7 @@ const ParentHome = () => {
               स्वागत है
             </Text>
             <Text className="text-3xl font-semibold text-blue-700">
-              {user?.name}
+              {parent?.name}
             </Text>
           </View>
         </View>
@@ -55,7 +62,7 @@ const ParentHome = () => {
                 संस्थान का नाम:{" "}
               </Text>
               <Text className="text-lg text-gray-800 ml-2 flex-wrap max-w-[65%]">
-              श्‍वेता नवोदय प्रवेश संस्थान
+                श्‍वेता नवोदय प्रवेश संस्थान
               </Text>
             </View>
             <View className="flex flex-row flex-wrap items-center">
@@ -76,9 +83,6 @@ const ParentHome = () => {
             </View>
           </View>
         </View>
-
-        
-
 
         {/* Student Details Section */}
         <View className="bg-white border-2 border-gray-200 rounded-lg shadow-lg p-6 mb-4">

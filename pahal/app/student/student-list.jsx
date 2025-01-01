@@ -6,6 +6,7 @@ import {
   SectionList,
   ScrollView,
   RefreshControl,
+  Switch,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,6 +20,10 @@ const StudentList = () => {
   const { students } = useSelector((state) => state.student);
   const [refreshing, setRefreshing] = useState(false);
   const [filteredResults, setFilteredResults] = useState([]);
+  const [filters, setFilters] = useState({
+    accommodation: false,
+    transport: false,
+  });
 
   useEffect(() => {
     dispatch(fetchAllStudents());
@@ -32,12 +37,30 @@ const StudentList = () => {
 
   const handleStudentPress = (student) => {
     router.push({
-        pathname: "/student/student-details",
-        params: {
-          studentId: student._id,
-        },
-      });
+      pathname: "/student/student-details",
+      params: {
+        studentId: student._id,
+      },
+    });
   };
+
+  const applyFilters = () => {
+    let filtered = students;
+
+    if (filters.accommodation) {
+      filtered = filtered.filter((student) => student.accommodation);
+    }
+
+    if (filters.transport) {
+      filtered = filtered.filter((student) => student.transport);
+    }
+
+    setFilteredResults(filtered);
+  };
+
+  useEffect(() => {
+    applyFilters();
+  }, [filters, students]);
 
   // Group students by class
   const groupStudentsByClass = (studentsList) => {
@@ -56,9 +79,9 @@ const StudentList = () => {
     }));
   };
 
-  const groupedStudents = groupStudentsByClass(
-    filteredResults.length > 0 ? filteredResults : students
-  );
+  const groupedStudents = groupStudentsByClass(filteredResults);
+
+
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -70,7 +93,9 @@ const StudentList = () => {
       >
         {/* Header */}
         <View className="flex justify-between items-center flex-row mb-6">
-          <Text className="text-2xl font-semibold text-blue-700">छात्र सूची</Text>
+          <Text className="text-2xl font-semibold text-blue-700">
+            छात्र सूची
+          </Text>
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="#1d4ed8" />
           </TouchableOpacity>
@@ -82,6 +107,28 @@ const StudentList = () => {
           students={students}
           setFilteredResults={setFilteredResults}
         />
+
+        {/* Filters */}
+        <View className="flex flex-row justify-between items-center my-4">
+          <View className="flex flex-row items-center">
+            <Text className="text-sm text-gray-800 mr-2">आवास</Text>
+            <Switch
+              value={filters.accommodation}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, accommodation: value }))
+              }
+            />
+          </View>
+          <View className="flex flex-row items-center">
+            <Text className="text-sm text-gray-800 mr-2">परिवहन</Text>
+            <Switch
+              value={filters.transport}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, transport: value }))
+              }
+            />
+          </View>
+        </View>
 
         {/* Grouped Student List */}
         <SectionList
@@ -99,12 +146,15 @@ const StudentList = () => {
             >
               {/* Student Info */}
               <View>
-                <Text className="text-lg font-semibold text-blue-800">{item.name}</Text>
+                <Text className="text-lg font-semibold text-blue-800">
+                  {item.name}
+                </Text>
                 <Text className="text-sm text-gray-700 mt-2">
                   कक्षा: <Text className="font-medium">{item.class}</Text>
                 </Text>
                 <Text className="text-sm text-gray-700 mt-1">
-                  पिता का नाम: <Text className="font-medium">{item.parent_id.name}</Text>
+                  पिता का नाम:{" "}
+                  <Text className="font-medium">{item.parent_id.name}</Text>
                 </Text>
               </View>
             </TouchableOpacity>

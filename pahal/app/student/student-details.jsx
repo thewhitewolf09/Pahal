@@ -206,9 +206,13 @@ const StudentDetail = () => {
                   .length - 1
               ]?.amount || "N/A"}
             </Text>
-            <Text className="text-base text-gray-500 font-bold">
+            <Text className="text-base text-gray-600 font-bold">
               <Text className="font-medium text-gray-800">आवास: </Text>
               {student?.accommodation ? "हाँ" : "नहीं"}
+            </Text>
+            <Text className="text-base text-gray-600 font-bold">
+              <Text className="font-medium text-gray-800">परिवहन: </Text>
+              {student?.transport ? "हाँ" : "नहीं"}
             </Text>
           </View>
         </View>

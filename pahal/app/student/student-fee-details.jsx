@@ -56,11 +56,10 @@ const fetchStudent = async () => {
 // Fetch fees and payment history based on parent_id
 const fetchRelatedData = async (parentId) => {
   try {
-    await dispatch(fetchFeesByParent(parentId)).unwrap();
-    await dispatch(fetchPaymentHistory(parentId)).unwrap();
+    await dispatch(fetchFeesByParent(parentId));
+    await dispatch(fetchPaymentHistory(parentId));
   } catch (error) {
     console.error("Error fetching related data:", error.message || error);
-    alert("डेटा प्राप्त करने में समस्या हुई। कृपया पुनः प्रयास करें।");
   }
 };
 
@@ -107,7 +106,7 @@ useFocusEffect(
       await dispatch(processPayment(updatedFee)).unwrap();
       alert("फ़ीस अपडेट सफलतापूर्वक हो गई।");
       setIsModalVisible(false);
-      fetchRelatedData(); // Refresh fees and payment history
+      fetchRelatedData(); 
     } catch (error) {
       console.error("Error updating fee:", error.message || error);
       alert("फ़ीस अपडेट करने में समस्या हुई। कृपया पुनः प्रयास करें।");
@@ -263,7 +262,7 @@ useFocusEffect(
         </View>
 
         <CustomButton
-          title="Update Fee"
+          title="फीस जमा करें"
           handlePress={() => setIsModalVisible(true)}
         />
 

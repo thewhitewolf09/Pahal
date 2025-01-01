@@ -71,6 +71,7 @@ const EditParentScreen = () => {
     try {
       await dispatch(updateParent({ id: parentId, updatedData })).unwrap();
       setUploading(false);
+      await dispatch(fetchParentById(parentId));
       Alert.alert("सफलता", "अभिभावक सफलतापूर्वक अपडेट किया गया!");
       router.push("/home");
     } catch (error) {

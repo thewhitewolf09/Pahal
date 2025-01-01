@@ -141,6 +141,28 @@ export const fetchPendingFees = createAsyncThunk(
   }
 );
 
+// Fetch Monthly Fees Summary
+export const fetchMonthlyFeesSummary = createAsyncThunk(
+  "fees/fetchMonthlyFeesSummary",
+  async (_, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = getToken(state);
+
+    try {
+      const response = await api.get("/api/fees/summery/monthly", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.summary;
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Failed to fetch monthly fees summary.";
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
 // Fees Slice
 const feesSlice = createSlice({
   name: "fees",
@@ -148,6 +170,7 @@ const feesSlice = createSlice({
     feesRecords: [],
     feesByParent: [],
     pendingFees: [],
+    monthlySummary: null,
     loading: false,
     error: null,
   },
@@ -245,6 +268,20 @@ const feesSlice = createSlice({
         state.pendingFees = action.payload;
       })
       .addCase(fetchPendingFees.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Fetch Monthly Fees Summary
+      .addCase(fetchMonthlyFeesSummary.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMonthlyFeesSummary.fulfilled, (state, action) => {
+        state.loading = false;
+        state.monthlySummary = action.payload;
+      })
+      .addCase(fetchMonthlyFeesSummary.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

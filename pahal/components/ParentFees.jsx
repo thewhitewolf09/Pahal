@@ -19,10 +19,9 @@ import {
 } from "../redux/slices/paymentSlice";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import CustomButton from "./CustomButton";
-import RazorpayCheckout from 'react-native-razorpay';
-import { YOUR_RAZORPAY_KEY_ID } from '@env'
+import RazorpayCheckout from "react-native-razorpay";
+import { YOUR_RAZORPAY_KEY_ID } from "@env";
 import { images } from "../constants";
-
 
 const ParentFees = () => {
   const dispatch = useDispatch();
@@ -42,7 +41,6 @@ const ParentFees = () => {
     }, [])
   );
 
-
   const fetchAllData = async () => {
     await dispatch(fetchFeesByParent(user?._id)).unwrap();
     await dispatch(fetchPaymentHistory(user?._id)).unwrap();
@@ -60,12 +58,12 @@ const ParentFees = () => {
       alert("कृपया मान्य भुगतान राशि दर्ज करें।");
       return;
     }
-  
+
     const options = {
       description: "फीस भुगतान",
       image: images.logo,
       currency: "INR",
-      key: process.env.YOUR_RAZORPAY_KEY_ID, 
+      key: process.env.YOUR_RAZORPAY_KEY_ID,
       amount: paymentAmount * 100, // Amount in paise (₹1 = 100 paise)
       name: "PAHAL",
       prefill: {
@@ -75,13 +73,15 @@ const ParentFees = () => {
       },
       theme: { color: "#1d4ed8" },
     };
-  
+
     try {
       const paymentResult = await RazorpayCheckout.open(options);
       // Payment Success
-      alert(`भुगतान सफल! ट्रांजैक्शन आईडी: ${paymentResult.razorpay_payment_id}`);
+      alert(
+        `भुगतान सफल! ट्रांजैक्शन आईडी: ${paymentResult.razorpay_payment_id}`
+      );
       setIsModalVisible(false);
-  
+
       // Dispatch payment details to backend
       const updatedFee = {
         parent_id: user?._id,
@@ -96,7 +96,6 @@ const ParentFees = () => {
       alert("भुगतान रद्द या असफल हो गया। कृपया पुनः प्रयास करें।");
     }
   };
-  
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -128,20 +127,27 @@ const ParentFees = () => {
 
           {/* Fee Rows */}
           {feesByParent && feesByParent.length > 0 ? (
-            feesByParent.map((fee) => (
+            [
+              ...new Map(
+                feesByParent.map((fee) => [fee.student_id?._id, fee.student_id])
+              ).values(),
+            ].map((student) => (
               <View
-                key={fee?._id}
+                key={student?._id}
                 className="flex-row justify-between py-2 border-b border-gray-100"
               >
                 <Text className="text-base text-gray-700">
-                  {fee.student_id?.name || "जानकारी उपलब्ध नहीं"}
+                  {student?.name || "जानकारी उपलब्ध नहीं"}
                 </Text>
                 <Text className="text-base text-blue-700">
-                  ₹{fee.amount || "0"}
+                  ₹
+                  {feesByParent.find(
+                    (fee) => fee.student_id?._id === student?._id
+                  )?.amount || "0"}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
-                    setSelectedStudent(fee.student_id);
+                    setSelectedStudent(student);
                     setIsFeeModalVisible(true);
                   }}
                   className="bg-blue-100 px-3 py-1 rounded"
@@ -294,7 +300,6 @@ const ParentFees = () => {
                             : "N/A"}
                         </Text>
 
-                        
                         {/* Due Date */}
                         <Text className="flex-1 text-center py-2 text-gray-600">
                           {fee.due_date

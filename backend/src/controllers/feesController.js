@@ -1,5 +1,7 @@
 import Fees from "../models/fees.js";
+import Payment from "../models/payment.js";
 import Student from "../models/student.js";
+import moment from "moment";
 
 // Add Fees
 export const addFee = async (req, res) => {
@@ -65,7 +67,7 @@ export const getFeesByParent = async (req, res) => {
     }
 
     // Extract student_ids from the found students
-    const studentIds = students.map(student => student._id);
+    const studentIds = students.map((student) => student._id);
 
     // Fetch fees for all students associated with this parent
     const fees = await Fees.find({ student_id: { $in: studentIds } })
@@ -89,7 +91,6 @@ export const getFeesByParent = async (req, res) => {
     });
   }
 };
-
 
 // Update Fee Status (Paid)
 export const updateFeeStatus = async (req, res) => {
@@ -154,6 +155,93 @@ export const getPendingFees = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch pending fees",
+      error: error.message,
+    });
+  }
+};
+
+// Get Fees Summary
+export const getMonthlyFeesSummary = async (req, res) => {
+  try {
+    // Fixed due date for the current month
+    const fixedDueDate = moment().subtract(1, "month").date(30).toDate();
+
+    // Fetch all fees
+    const fees = await Fees.find().populate("student_id", "parent_id");
+
+    // Fetch all payments
+    const payments = await Payment.find();
+
+    // Object to track parent totals
+    const parentData = {};
+
+    // Process fees
+    fees.forEach((fee) => {
+      const parentId = fee.student_id?.parent_id?.toString();
+
+      if (!parentId) {
+        console.warn(`Skipping fee record with missing parent data: ${fee._id}`);
+        return;
+      }
+
+      if (!parentData[parentId]) {
+        parentData[parentId] = { totalFees: 0, totalPayments: 0 };
+      }
+
+      // Add fees to the parent's total
+      parentData[parentId].totalFees += fee.amount;
+    });
+
+    // Process payments
+    payments.forEach((payment) => {
+      const parentId = payment.parent_id?.toString();
+
+      if (!parentId) {
+        console.warn(
+          `Skipping payment record with missing parent data: ${payment._id}`
+        );
+        return;
+      }
+
+      if (!parentData[parentId]) {
+        parentData[parentId] = { totalFees: 0, totalPayments: 0 };
+      }
+
+      // Add payment to the parent's total
+      parentData[parentId].totalPayments += payment.amount_paid;
+    });
+
+    // Calculate total unpaid fees
+    let totalUnpaidFees = 0;
+
+    Object.values(parentData).forEach((data) => {
+      const unpaidFees = data.totalFees - data.totalPayments;
+      if (unpaidFees > 0) {
+        totalUnpaidFees += unpaidFees;
+      }
+    });
+
+    // Calculate total fees for the fixed due date
+    const totalFeesCurrentMonth = fees
+      .filter((fee) => {
+        const dueDate = new Date(fee.due_date).toISOString().split("T")[0];
+        const fixedDate = new Date(fixedDueDate).toISOString().split("T")[0];
+        return dueDate === fixedDate;
+      })
+      .reduce((sum, fee) => sum + fee.amount, 0);
+
+    res.status(200).json({
+      message: "Monthly fees summary fetched successfully",
+      summary: {
+        totalFeesCurrentMonth,
+        totalUnpaidFees,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to fetch monthly fees summary",
       error: error.message,
     });
   }

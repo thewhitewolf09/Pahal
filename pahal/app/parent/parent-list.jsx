@@ -39,7 +39,6 @@ const ParentList = () => {
     });
   };
 
-  const parentList = filteredResults.length > 0 ? filteredResults : parents;
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -68,7 +67,7 @@ const ParentList = () => {
 
         {/* Flat List of Parents */}
         <FlatList
-          data={parentList}
+          data={filteredResults}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <TouchableOpacity

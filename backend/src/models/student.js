@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const StudentSchema = new mongoose.Schema(
   {
@@ -6,7 +6,7 @@ const StudentSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 3,
-      maxlength: 50, 
+      maxlength: 50,
     },
     class: {
       type: String,
@@ -14,24 +14,28 @@ const StudentSchema = new mongoose.Schema(
     },
     parent_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Parent', 
+      ref: "Parent",
       required: true,
     },
     notes: {
       type: String,
-      maxlength: 500, 
+      maxlength: 500,
       default: null,
     },
     accommodation: {
       type: Boolean,
       default: false,
     },
+    transport: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 
-const Student = mongoose.model('Student', StudentSchema);
+const Student = mongoose.model("Student", StudentSchema);
 
 export default Student;

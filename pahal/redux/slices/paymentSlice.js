@@ -39,7 +39,6 @@ export const fetchPaymentHistory = createAsyncThunk(
         },
       });
 
-      console.log("payement history",response.data)
       return response.data.payments;
     } catch (error) {
       const errorMessage =

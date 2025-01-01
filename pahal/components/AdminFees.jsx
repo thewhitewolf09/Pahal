@@ -10,7 +10,10 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { fetchAllFees } from "../redux/slices/feesSlice";
+import {
+  fetchAllFees,
+  fetchMonthlyFeesSummary,
+} from "../redux/slices/feesSlice";
 import { fetchAllStudents } from "../redux/slices/studentsSlice";
 import SearchInput from "./SearchInput";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -20,7 +23,7 @@ import { notifyAllParents } from "../redux/slices/parentSlice";
 const AdminFees = () => {
   const dispatch = useDispatch();
 
-  const { feesRecords } = useSelector((state) => state.fees);
+  const { feesRecords, monthlySummary } = useSelector((state) => state.fees);
   const { students } = useSelector((state) => state.student);
   const [refreshing, setRefreshing] = useState(false);
   const [filteredResults, setFilteredResults] = useState([]);
@@ -29,7 +32,6 @@ const AdminFees = () => {
   const getBorderColor = (status) => {
     if (status === "Pending") return "border-red-500";
     if (status === "Paid") return "border-green-500";
-    if (status === "Partial") return "border-yellow-500";
     return "border-gray-300";
   };
 
@@ -39,7 +41,6 @@ const AdminFees = () => {
     );
 
     if (studentFees.some((fee) => fee.status === "Pending")) return "Pending";
-    if (studentFees.some((fee) => fee.status === "Partial")) return "Partial";
     if (studentFees.every((fee) => fee.status === "Paid")) return "Paid";
 
     return "Unknown";
@@ -73,6 +74,7 @@ const AdminFees = () => {
     useCallback(() => {
       dispatch(fetchAllStudents());
       dispatch(fetchAllFees());
+      dispatch(fetchMonthlyFeesSummary());
     }, [dispatch])
   );
 
@@ -80,6 +82,7 @@ const AdminFees = () => {
     setRefreshing(true);
     dispatch(fetchAllStudents());
     dispatch(fetchAllFees());
+    dispatch(fetchMonthlyFeesSummary());
     setRefreshing(false);
   };
 
@@ -90,8 +93,7 @@ const AdminFees = () => {
 
     const priority = {
       Pending: 1,
-      Partial: 2,
-      Paid: 3,
+      Paid: 2,
     };
 
     return priority[feeStatusA] - priority[feeStatusB];
@@ -116,6 +118,27 @@ const AdminFees = () => {
           students={students}
           setFilteredResults={setFilteredResults}
         />
+
+        {/* Monthly Fees Summary Card */}
+        <View className="bg-blue-100 p-4 rounded-lg shadow-md">
+          <Text className="text-lg font-bold text-blue-900 mb-2">
+            मासिक शुल्क सारांश
+          </Text>
+          <View className="flex flex-row justify-between">
+            <Text className="text-base text-blue-700">
+              कुल शुल्क (वर्तमान माह):
+            </Text>
+            <Text className="text-base font-pbold text-blue-700">
+              ₹{monthlySummary?.totalFeesCurrentMonth}
+            </Text>
+          </View>
+          <View className="flex flex-row justify-between mt-1">
+            <Text className="text-base  text-blue-700">कुल बकाया शुल्क:</Text>
+            <Text className="text-base font-pbold text-red-700">
+              ₹{monthlySummary?.totalUnpaidFees}
+            </Text>
+          </View>
+        </View>
 
         <View className="flex items-end mt-4">
           <TouchableOpacity
@@ -168,8 +191,6 @@ const AdminFees = () => {
                   className={`px-3 py-1 rounded-full ${
                     feeStatus === "Pending"
                       ? "bg-red-100"
-                      : feeStatus === "Partial"
-                      ? "bg-yellow-100"
                       : feeStatus === "Paid"
                       ? "bg-green-100"
                       : "bg-gray-100"
@@ -179,8 +200,6 @@ const AdminFees = () => {
                     className={`text-sm ${
                       feeStatus === "Pending"
                         ? "text-red-600"
-                        : feeStatus === "Partial"
-                        ? "text-yellow-600"
                         : feeStatus === "Paid"
                         ? "text-green-600"
                         : "text-gray-600"
@@ -188,8 +207,6 @@ const AdminFees = () => {
                   >
                     {feeStatus === "Pending"
                       ? "बाकी"
-                      : feeStatus === "Partial"
-                      ? "आंशिक रूप से"
                       : feeStatus === "Paid"
                       ? "भरी गई"
                       : "अज्ञात"}

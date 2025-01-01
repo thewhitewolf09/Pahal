@@ -80,12 +80,14 @@ export const updateStudent = async (req, res) => {
     parent_id,
     notes,
     accommodation,
+    transport,
   } = req.body;
 
+  
   try {
     const student = await Student.findByIdAndUpdate(
       id,
-      { name, class: studentClass, parent_id, notes, accommodation },
+      { name, class: studentClass, parent_id, notes, accommodation, transport },
       { new: true }
     );
     if (!student) {

@@ -21,6 +21,7 @@ const EditStudentScreen = () => {
     parent_name: "",
     notes: "",
     accommodation: false,
+    transport: false,
   });
 
   const classOptions = ["Nursery", "1", "2", "3", "4", "5", "JNV", "JNV+"];
@@ -33,6 +34,7 @@ const EditStudentScreen = () => {
         parent_name: student.parent_id.name || "",
         notes: student.notes || "",
         accommodation: student.accommodation || false,
+        transport: student.transport || false,
       });
     }
   }, [student]);
@@ -57,6 +59,7 @@ const EditStudentScreen = () => {
       parent_id: student.parent_id._id,
       notes: form.notes,
       accommodation: form.accommodation,
+      transport: form.transport,
     };
 
     try {
@@ -141,6 +144,20 @@ const EditStudentScreen = () => {
           >
             <Text className="text-white text-base font-medium">
               {form.accommodation ? "हां" : "नहीं"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View className="flex-row items-center justify-between mt-6 p-4 border border-gray-300 rounded-lg bg-gray-50">
+          <Text className="text-lg text-blue-700 font-bold">परिवहन:</Text>
+          <TouchableOpacity
+            className={`px-6 py-2 rounded-lg ${
+              form.transport ? "bg-green-600" : "bg-red-500"
+            } shadow-md`}
+            onPress={() => setFormField("transport", !form.transport)}
+          >
+            <Text className="text-white text-base font-medium">
+              {form.transport ? "हां" : "नहीं"}
             </Text>
           </TouchableOpacity>
         </View>

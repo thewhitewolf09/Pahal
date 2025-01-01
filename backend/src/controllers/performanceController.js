@@ -14,8 +14,6 @@ export const addPerformance = async (req, res) => {
       marks,
     });
 
-
-    
     await performance.save();
     res.status(201).json({
       message: "Performance added successfully",
