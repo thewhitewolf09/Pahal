@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import { config } from "dotenv";
 import "./src/cronJobs/addMonthlyFees.js";
 import "./src/cronJobs/feeReminder.js"
+import compression from 'compression';
 
 const app = express();
 
@@ -29,6 +30,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(compression());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
