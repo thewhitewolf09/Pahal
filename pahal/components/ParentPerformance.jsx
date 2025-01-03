@@ -4,9 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPerformanceByStudent } from "../redux/slices/performanceSlice"; // Assume this action exists
 import { Picker } from "@react-native-picker/picker";
-import { TouchableOpacity } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { router } from "expo-router";
+
 
 const ParentPerformance = () => {
   const dispatch = useDispatch();

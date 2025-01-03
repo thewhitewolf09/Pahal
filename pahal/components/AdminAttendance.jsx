@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -17,9 +17,8 @@ import {
   addAttendance,
   updateAttendance,
 } from "../redux/slices/attendanceSlice"; 
-import { router, useFocusEffect } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import Ionicons from "react-native-vector-icons/Ionicons";
 
 
 const AdminAttendance = () => {

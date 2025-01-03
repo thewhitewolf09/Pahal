@@ -4,7 +4,7 @@ import ParentFees from "../../components/ParentFees";
 
 
 const Fees = () => {
-  const { user, token, role } = useSelector((state) => state.user);
+  const { role } = useSelector((state) => state.user);
   return <>{role === "admin" ? <AdminFees /> : <ParentFees />}</>;
 };
 

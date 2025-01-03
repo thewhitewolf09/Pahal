@@ -7,9 +7,8 @@ import { logout } from "../../redux/slices/userSlice";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons"; // Assuming you're using FontAwesome for the edit icon
 import { useEffect, useState } from "react";
-import MapView, { Marker } from "react-native-maps";
 import { fetchParentById } from "../../redux/slices/parentSlice";
- 
+
 const Settings = () => {
   const dispatch = useDispatch();
   const { user, role } = useSelector((state) => state.user);
@@ -18,9 +17,9 @@ const Settings = () => {
 
   useEffect(() => {
     if (role === "parent") {
-      dispatch(fetchParentById(user._id));
+      dispatch(fetchParentById(user?._id));
     }
-  }, [user._id]);
+  }, [user?._id]);
 
   const [details, setDetails] = useState({
     name: "श्‍वेता नवोदय प्रवेश संस्थान",
@@ -133,7 +132,7 @@ const Settings = () => {
                         size={24}
                         color="#4F8A8B"
                       />
-                      <Text className="text-gray-600 ml-2">{user.phone}</Text>
+                      <Text className="text-gray-600 ml-2">{user?.phone}</Text>
                     </View>
                   </View>
                 </View>
@@ -142,7 +141,7 @@ const Settings = () => {
           </LinearGradient>
         </View>
 
-        <View className={`mb-4 rounded-lg shadow-lg`}>
+        {/* <View className={`mb-4 rounded-lg shadow-lg`}>
           <View
             style={{
               borderColor: "#0f766e",
@@ -150,8 +149,8 @@ const Settings = () => {
               borderRadius: 10,
               overflow: "hidden",
             }}
-          >
-            <MapView
+          > */}
+        {/* <MapView
               style={{
                 height: isMapExpanded ? 500 : 200,
                 marginBottom: 40,
@@ -177,18 +176,18 @@ const Settings = () => {
                 title={details?.name}
                 description={`${details.address.street}, ${details.address.city},${details.address.state}, ${details.address.country}`}
               />
-            </MapView>
+            </MapView> */}
 
-            {/* Address Text */}
-            <View className="absolute bottom-0 left-0 right-0 p-2 bg-white rounded-lg">
+        {/* Address Text */}
+        {/* <View className="absolute bottom-0 left-0 right-0 p-2 bg-white rounded-lg">
               <Text className="text-center text-sm font-semibold">
                 {details.address.street}, {details.address.city},{" "}
                 {details.address.state}, ,{details.address.country}
               </Text>
-            </View>
+            </View> */}
 
-            {/* Toggle Button */}
-            <TouchableOpacity
+        {/* Toggle Button */}
+        {/* <TouchableOpacity
               onPress={toggleMapSize}
               className="absolute right-2 top-2 bg-white p-2 rounded-full shadow-md"
             >
@@ -197,9 +196,9 @@ const Settings = () => {
                 size={24}
                 color="#0f766e"
               />
-            </TouchableOpacity>
-          </View>
-        </View>
+            </TouchableOpacity> */}
+        {/* </View>
+        </View> */}
 
         {/* Contact Support Section */}
         <View className="mb-4">

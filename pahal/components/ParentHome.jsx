@@ -1,8 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Text, View, TouchableOpacity, Image, ScrollView } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { Text, View, Image, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { router } from "expo-router";
 import { images } from "../constants";
 import { useEffect } from "react";
 import { fetchParentById } from "../redux/slices/parentSlice";
@@ -14,9 +12,9 @@ const ParentHome = () => {
 
   useEffect(() => {
     if (role === "parent") {
-      dispatch(fetchParentById(user._id));
+      dispatch(fetchParentById(user?._id));
     }
-  }, [user._id]);
+  }, [user?._id]);
 
   return (
     <SafeAreaView className="bg-white h-full">

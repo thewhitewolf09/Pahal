@@ -7,11 +7,10 @@ import {
   RefreshControl,
   Image,
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Loader } from ".";
 import { images } from "../constants";
 import { fetchAllStudents } from "../redux/slices/studentsSlice";

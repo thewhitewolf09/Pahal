@@ -4,7 +4,7 @@ import ParentPerformance from "../../components/ParentPerformance";
 
 
 const Performance = () => {
-  const { user, token, role } = useSelector((state) => state.user);
+  const { role } = useSelector((state) => state.user);
   return <>{role === "admin" ? <AdminPerformance /> : <ParentPerformance />}</>;
 };
 

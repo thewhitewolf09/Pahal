@@ -4,13 +4,14 @@ import Student from "../models/student.js";
 
 // Utility to calculate the due date
 const calculateDueDate = (year, month) => {
-  return new Date(year, month, 30, 23, 59, 59); // 30th of the month at 23:59:59
+  const date = new Date(year, month, 30); // 30th of the month
+  return date.toISOString().split("T")[0];
 };
 
 // Function to calculate the fee based on the student's joining month and other conditions
 const calculateFeesForStudent = (student, changeDate) => {
   const joiningDate = new Date(student.joining_date);
-  const currentDate = changeDate || new Date(); // Use the change date if provided
+  const currentDate = changeDate || new Date();
   const diffInTime = currentDate - joiningDate;
   const diffInDays = diffInTime / (1000 * 3600 * 24);
 
@@ -40,7 +41,7 @@ const calculateFeesForStudent = (student, changeDate) => {
   return totalFees;
 };
 
-// Function to add or update fees for the previous month if they don't exist or need to be updated
+// Function to add or update fees for the previous month
 const addOrUpdateMonthlyFees = async () => {
   try {
     const students = await Student.find(); // Get all students
@@ -53,61 +54,68 @@ const addOrUpdateMonthlyFees = async () => {
     const previousMonth = currentMonth - 1;
     const previousMonthYear = previousMonth < 0 ? currentYear - 1 : currentYear;
     const previousMonthIndex = previousMonth < 0 ? 11 : previousMonth; // Handle December to January transition
-    const previousMonthDueDate = calculateDueDate(previousMonthYear, previousMonthIndex);
+    const previousMonthDueDate = calculateDueDate(
+      previousMonthYear,
+      previousMonthIndex
+    );
 
-    // Only proceed if the previous month's due date has passed
-    if (currentDate > previousMonthDueDate) {
-      for (const student of students) {
-        const totalFees = calculateFeesForStudent(student); // Calculate the fee based on student joining date and conditions
+    for (const student of students) {
+      const totalFees = calculateFeesForStudent(student); // Calculate the fee based on student joining date and conditions
 
-        // Check if the fees already exist for the student for the previous month
-        const existingFee = await Fees.findOne({
+      // If the transport or accommodation status changed mid-month, update the fees
+      const existingFee = await Fees.findOne({
+        student_id: student._id,
+        due_date: previousMonthDueDate, // Compare the formatted due date
+      });
+
+      if (!existingFee) {
+        // Create new fee record if one doesn't exist
+        await Fees.create({
           student_id: student._id,
+          amount: totalFees,
+          status: "Pending",
           due_date: previousMonthDueDate,
+          payment_date: null,
+          transaction_id: null,
         });
+      } else {
+        // Check if the transport or accommodation status changed
+        const feeNeedsUpdate =
+          student.transport !== existingFee.transport ||
+          student.accommodation !== existingFee.accommodation;
 
-        // If fees don't exist, create a new one; if they exist, update them if the transport or accommodation status changed
-        if (!existingFee) {
-          // Create new fee record if one doesn't exist
-          await Fees.create({
-            student_id: student._id,
-            amount: totalFees,
-            status: "Pending",
-            due_date: previousMonthDueDate,
-            payment_date: null,
-            transaction_id: null,
-          });
-        } else {
-          // If the transport or accommodation status changed mid-month, update the fees
-          const feeNeedsUpdate =
-            student.transport !== existingFee.transport ||
-            student.accommodation !== existingFee.accommodation;
+        if (feeNeedsUpdate) {
+          console.log(
+            `Updating fee for student ${student._id} due to status change.`
+          );
 
-          if (feeNeedsUpdate) {
-            // Find the date of the change (could be when the student updated their transport/accommodation status)
-            const changeDate = new Date(); // Example, you should replace this with the actual date of change
+          // Use the date of change (actual implementation depends on tracking)
+          const changeDate = new Date(); // Replace with the actual change date if available
 
-            // Recalculate the fee for the changed status from the change date to the end of the month
-            const newFee = calculateFeesForStudent(student, changeDate);
+          // Recalculate the fee for the updated status
+          const updatedFee = calculateFeesForStudent(student, changeDate);
 
-            // Adjust the amount for the current month
-            existingFee.amount = newFee;
-            existingFee.transport = student.transport;
-            existingFee.accommodation = student.accommodation;
+          // Update the fee record
+          existingFee.amount = updatedFee;
+          existingFee.transport = student.transport;
+          existingFee.accommodation = student.accommodation;
 
-            await existingFee.save();
-          }
+          await existingFee.save();
+          console.log(
+            `Fee updated for student ${student._id} to ${updatedFee} on ${previousMonthDueDate}.`
+          );
         }
       }
-    } else {
-      console.log("It's not yet time to generate fees for the next month.");
     }
   } catch (error) {
-    console.error("Error while adding or updating monthly fees:", error.message);
+    console.error(
+      "Error while adding or updating monthly fees:",
+      error.message
+    );
   }
 };
 
 // Schedule the cron job to run daily at midnight local time
-cron.schedule("* * * * * *", () => {
+cron.schedule("0 0 * * *", () => {
   addOrUpdateMonthlyFees();
 });

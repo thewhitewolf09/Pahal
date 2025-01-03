@@ -15,9 +15,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { images } from "../../constants";
 import { CustomButton, FormField } from "../../components";
 import { loginUser } from "../../redux/slices/userSlice";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 
 const SignIn = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.user);
 
@@ -43,10 +44,11 @@ const SignIn = () => {
       ).unwrap();
 
       router.push("/home"); // Navigate to the home screen on success
-    } catch (err) {
-      Alert.alert("त्रुटि", err || "लॉगिन विफल रहा।");
+    } catch (error) {
+      Alert.alert("त्रुटि", error || "लॉगिन विफल रहा।");
     }
   };
+  
 
   return (
     <SafeAreaView className="bg-white h-full">

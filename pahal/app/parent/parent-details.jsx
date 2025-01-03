@@ -19,7 +19,6 @@ import {
   fetchParentById,
   sendReminder,
 } from "../../redux/slices/parentSlice";
-import { CustomButton } from "../../components";
 import { fetchFeesByParent } from "../../redux/slices/feesSlice";
 import { fetchPaymentHistory } from "../../redux/slices/paymentSlice";
 
@@ -30,7 +29,6 @@ const ParentDetailScreen = () => {
   const { parent } = useSelector((state) => state.parent);
   const { paymentHistory } = useSelector((state) => state.payment);
   const [refreshing, setRefreshing] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFeeModalVisible, setIsFeeModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteConfirmationName, setDeleteConfirmationName] = useState("");

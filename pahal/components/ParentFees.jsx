@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -17,10 +17,8 @@ import {
   fetchPaymentHistory,
   processPayment,
 } from "../redux/slices/paymentSlice";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import CustomButton from "./CustomButton";
 import RazorpayCheckout from "react-native-razorpay";
-import { YOUR_RAZORPAY_KEY_ID } from "@env";
 import { images } from "../constants";
 
 const ParentFees = () => {
