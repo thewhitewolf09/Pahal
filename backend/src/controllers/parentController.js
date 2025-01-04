@@ -152,14 +152,22 @@ export const deleteParent = async (req, res) => {
       return res.status(404).json({ message: "Parent not found" });
     }
 
-    // Delete associated students
-    await Student.deleteMany({ parent_id: parent._id });
+    // Retrieve the IDs of the parent's children
+    const childrenIds = parent.children_ids;
+
+    if (childrenIds && childrenIds.length > 0) {
+      // Delete fees records associated with the parent's children
+      await Fees.deleteMany({ student_id: { $in: childrenIds } });
+
+      // Delete the students associated with the parent
+      await Student.deleteMany({ _id: { $in: childrenIds } });
+    }
 
     // Now delete the parent
     await Parent.findByIdAndDelete(id);
 
     res.status(200).json({
-      message: "Parent and associated students deleted successfully",
+      message: "Parent, associated students, and their fees deleted successfully",
     });
   } catch (error) {
     res
