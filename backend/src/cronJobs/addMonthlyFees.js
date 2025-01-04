@@ -3,9 +3,18 @@ import Fees from "../models/fees.js";
 import Student from "../models/student.js";
 
 const calculateDueDate = (year, month) => {
-  const date = new Date(year, month, 30); // 30th of the month
-  return date.toISOString().split("T")[0];
+  // Create a date object for the first day of the current month
+  const date = new Date(year, month + 1, 0); // 0 gives the last day of the previous month
+  const lastDay = date.getDate(); // Get the actual last day of the previous month
+
+  // Return the 30th if it exists, otherwise the last day of the month
+  const dueDay = Math.min(30, lastDay);
+
+  // Format the final due date
+  const dueDate = new Date(year, month, dueDay);
+  return dueDate.toISOString().split("T")[0];
 };
+
 
 const calculateFeesForStudent = (student, changeDate) => {
   const joiningDate = new Date(student.createdAt);
