@@ -185,59 +185,65 @@ const AdminAttendance = () => {
         )}
 
         {/* Student List */}
-        {Object.entries(groupedStudents).map(([className, studentsInClass]) => (
-          <View key={className} className="mb-5 px-4">
-            <Text className="text-lg font-bold text-blue-800 mb-3">
-              कक्षा: {className}
-            </Text>
-            <View className="space-y-3">
-              {studentsInClass.map((student) => (
-                <View
-                  key={student._id}
-                  className="flex flex-row justify-between items-center bg-white shadow-2xl rounded-lg p-3"
-                >
-                  <View>
-                    <Text className="text-lg font-medium text-gray-700">
-                      {student.name}
-                    </Text>
-                    <Text className="text-sm text-gray-500">
-                      अभिभावक: {student.parent_id.name}
-                    </Text>
-                  </View>
-                  <View className="flex flex-row space-x-4 justify-center items-center">
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleAttendanceChange(student._id, "Present")
-                      }
-                      className={`w-12 h-12 rounded-full flex justify-center items-center ${
-                        attendance[student._id] === "Present"
-                          ? "bg-green-600"
-                          : "bg-gray-300"
-                      }`}
-                    >
-                      <Text className="text-white font-bold">P</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleAttendanceChange(student._id, "Absent")
-                      }
-                      className={`w-12 h-12 rounded-full flex justify-center items-center ${
-                        attendance[student._id] === "Absent"
-                          ? "bg-red-600"
-                          : "bg-gray-300"
-                      }`}
-                    >
-                      <Text className="text-white font-bold">A</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ))}
-            </View>
+        {students.length === 0 ? (
+          <View className="flex justify-center items-center mt-10">
+            <Text className="text-gray-500 text-lg">कोई छात्र उपलब्ध नहीं</Text>
           </View>
-        ))}
+        ) : (
+          Object.entries(groupedStudents).map(([className, studentsInClass]) => (
+            <View key={className} className="mb-5 px-4">
+              <Text className="text-lg font-bold text-blue-800 mb-3">
+                कक्षा: {className}
+              </Text>
+              <View className="space-y-3">
+                {studentsInClass.map((student) => (
+                  <View
+                    key={student._id}
+                    className="flex flex-row justify-between items-center bg-white shadow-2xl rounded-lg p-3"
+                  >
+                    <View>
+                      <Text className="text-lg font-medium text-gray-700">
+                        {student.name}
+                      </Text>
+                      <Text className="text-sm text-gray-500">
+                        अभिभावक: {student.parent_id.name}
+                      </Text>
+                    </View>
+                    <View className="flex flex-row space-x-4 justify-center items-center">
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleAttendanceChange(student._id, "Present")
+                        }
+                        className={`w-12 h-12 rounded-full flex justify-center items-center ${
+                          attendance[student._id] === "Present"
+                            ? "bg-green-600"
+                            : "bg-gray-300"
+                        }`}
+                      >
+                        <Text className="text-white font-bold">P</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleAttendanceChange(student._id, "Absent")
+                        }
+                        className={`w-12 h-12 rounded-full flex justify-center items-center ${
+                          attendance[student._id] === "Absent"
+                            ? "bg-red-600"
+                            : "bg-gray-300"
+                        }`}
+                      >
+                        <Text className="text-white font-bold">A</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ))
+        )}
 
         {/* Save Button */}
-        {isToday(selectedDate.date) && (
+        {isToday(selectedDate.date) && students.length > 0 && (
           <View className="flex items-center mt-5">
             <LinearGradient
               colors={["#2563EB", "#1D4ED8"]}

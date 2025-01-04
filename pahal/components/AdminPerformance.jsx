@@ -1,4 +1,4 @@
-import React, { useState,  useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -122,170 +122,182 @@ const AdminPerformance = () => {
             </Text>
           </View>
 
-          <View className="mb-6 flex-row justify-between items-center">
-            <Text className="font-semibold text-xl text-gray-600 underline">
-              मिश्रित रविवार टेस्ट
-            </Text>
-            {!isAddingNew && (
-              <TouchableOpacity
-                onPress={() => setIsAddingNew(true)}
-                className="bg-blue-700 p-3 rounded-lg"
-              >
-                <Text className="text-white font-bold">नया परिणाम जोड़ें</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-
-          {Object.entries(groupedStudents).map(
-            ([className, studentsInClass]) => (
-              <View key={className} className="mb-6">
-                <Text className="text-lg font-bold text-blue-700 mb-3">
-                  कक्षा: {className}
-                </Text>
-                {studentsInClass.map((student) => {
-                  const studentPerformance = performanceRecords.find(
-                    (rec) => rec.student_id?._id === student?._id
-                  );
-                  const performanceId = studentPerformance?._id;
-                  return (
-                    <View
-                      key={student?._id}
-                      className="bg-white p-3 shadow-md mb-2 rounded-lg"
-                    >
-                      {isAddingNew ? (
-                        <View className="flex-row items-center justify-between">
-                          <View>
-                            <Text className="text-gray-800 font-semibold text-base">
-                              {student.name}
-                            </Text>
-                            <Text className="text-sm text-gray-600">
-                              अभिभावक: {student.parent_id.name}
-                            </Text>
-                          </View>
-                          <TextInput
-                            placeholder="अंक (100 में)"
-                            keyboardType="numeric"
-                            value={newResults[student?._id] || ""}
-                            onChangeText={(text) =>
-                              setNewResults((prev) => ({
-                                ...prev,
-                                [student?._id]: text,
-                              }))
-                            }
-                            className="p-3 rounded-md w-[40%] border-2 border-blue-600 font-semibold text-base"
-                          />
-                        </View>
-                      ) : editingStudentId === student?._id ? (
-                        <View className="flex-row items-center justify-between">
-                          <View className="w-1/2">
-                            <Text className="text-gray-800 font-semibold text-base">
-                              {student.name}
-                            </Text>
-                            <Text className="text-sm text-gray-600">
-                              अभिभावक: {student.parent_id.name}
-                            </Text>
-                          </View>
-                          <View className="flex-row justify-between items-center w-1/2">
-                            <TextInput
-                              placeholder="अंक"
-                              keyboardType="numeric"
-                              value={editMarks}
-                              onChangeText={setEditMarks}
-                              className="p-3 rounded-md w-[40%] border-2 border-blue-600 font-semibold text-base"
-                            />
-                            <View className="flex-row items-center w-[50%]">
-                              <TouchableOpacity
-                                onPress={() =>
-                                  handleUpdatePerformance(performanceId)
-                                } // Use performanceId
-                                className="p-2 rounded-lg mr-2"
-                              >
-                                <FontAwesome6
-                                  name="edit"
-                                  size={24}
-                                  color="#1D4ED8"
-                                />
-                              </TouchableOpacity>
-                              <TouchableOpacity
-                                onPress={() => setEditingStudentId(null)}
-                                className="p-2 rounded-lg"
-                              >
-                                <MaterialIcons
-                                  name="cancel"
-                                  size={24}
-                                  color="#D1D5DB"
-                                />
-                              </TouchableOpacity>
-                            </View>
-                          </View>
-                        </View>
-                      ) : (
-                        <View className="flex-row items-center justify-between shadow-2xl">
-                          <View className="w-1/2">
-                            <Text className="text-gray-800 font-semibold text-base">
-                              {student.name}
-                            </Text>
-                            <Text className="text-sm text-gray-600">
-                              अभिभावक: {student.parent_id.name}
-                            </Text>
-                          </View>
-                          <View className="flex-row items-center justify-between w-1/2">
-                            <Text className="text-gray-800 font-semibold text-base">
-                              {student.lastResult}/100
-                            </Text>
-                            <TouchableOpacity
-                              onPress={() => {
-                                setEditingStudentId(student?._id);
-                                setEditMarks(
-                                  student.lastResult === "कोई डेटा नहीं"
-                                    ? ""
-                                    : student.lastResult
-                                );
-                              }}
-                            >
-                              <FontAwesome6
-                                name="edit"
-                                size={24}
-                                color="#1D4ED8"
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      )}
-                    </View>
-                  );
-                })}
-              </View>
-            )
-          )}
-
-          {isAddingNew && (
-            <View className="flex-row justify-between mt-4 mb-8">
-              <TouchableOpacity
-                onPress={handleAddNewResults}
-                className="flex-1 mr-2"
-              >
-                <LinearGradient
-                  colors={["#2563EB", "#1D4ED8"]}
-                  className="rounded-lg p-4"
-                >
-                  <Text className="text-white text-center font-bold text-lg">
-                    जमा करें
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsAddingNew(false);
-                  setNewResults({});
-                }}
-                className="flex-1 ml-2 bg-gray-200 rounded-lg p-4"
-              >
-                <Text className="text-center font-bold text-lg text-gray-700">
-                  रद्द करें
-                </Text>
-              </TouchableOpacity>
+          {students.length === 0 ? (
+            <View className="flex justify-center items-center mt-10">
+              <Text className="text-gray-500 text-lg">
+                कोई छात्र उपलब्ध नहीं
+              </Text>
             </View>
+          ) : (
+            <>
+              <View className="mb-6 flex-row justify-between items-center">
+                <Text className="font-semibold text-xl text-gray-600 underline">
+                  मिश्रित रविवार टेस्ट
+                </Text>
+                {!isAddingNew && (
+                  <TouchableOpacity
+                    onPress={() => setIsAddingNew(true)}
+                    className="bg-blue-700 p-3 rounded-lg"
+                  >
+                    <Text className="text-white font-bold">
+                      नया परिणाम जोड़ें
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              {Object.entries(groupedStudents).map(
+                ([className, studentsInClass]) => (
+                  <View key={className} className="mb-6">
+                    <Text className="text-lg font-bold text-blue-700 mb-3">
+                      कक्षा: {className}
+                    </Text>
+                    {studentsInClass.map((student) => {
+                      const studentPerformance = performanceRecords.find(
+                        (rec) => rec.student_id?._id === student?._id
+                      );
+                      const performanceId = studentPerformance?._id;
+                      return (
+                        <View
+                          key={student?._id}
+                          className="bg-white p-3 shadow-md mb-2 rounded-lg"
+                        >
+                          {isAddingNew ? (
+                            <View className="flex-row items-center justify-between">
+                              <View>
+                                <Text className="text-gray-800 font-semibold text-base">
+                                  {student.name}
+                                </Text>
+                                <Text className="text-sm text-gray-600">
+                                  अभिभावक: {student.parent_id.name}
+                                </Text>
+                              </View>
+                              <TextInput
+                                placeholder="अंक (100 में)"
+                                keyboardType="numeric"
+                                value={newResults[student?._id] || ""}
+                                onChangeText={(text) =>
+                                  setNewResults((prev) => ({
+                                    ...prev,
+                                    [student?._id]: text,
+                                  }))
+                                }
+                                className="p-3 rounded-md w-[40%] border-2 border-blue-600 font-semibold text-base"
+                              />
+                            </View>
+                          ) : editingStudentId === student?._id ? (
+                            <View className="flex-row items-center justify-between">
+                              <View className="w-1/2">
+                                <Text className="text-gray-800 font-semibold text-base">
+                                  {student.name}
+                                </Text>
+                                <Text className="text-sm text-gray-600">
+                                  अभिभावक: {student.parent_id.name}
+                                </Text>
+                              </View>
+                              <View className="flex-row justify-between items-center w-1/2">
+                                <TextInput
+                                  placeholder="अंक"
+                                  keyboardType="numeric"
+                                  value={editMarks}
+                                  onChangeText={setEditMarks}
+                                  className="p-3 rounded-md w-[40%] border-2 border-blue-600 font-semibold text-base"
+                                />
+                                <View className="flex-row items-center w-[50%]">
+                                  <TouchableOpacity
+                                    onPress={() =>
+                                      handleUpdatePerformance(performanceId)
+                                    } // Use performanceId
+                                    className="p-2 rounded-lg mr-2"
+                                  >
+                                    <FontAwesome6
+                                      name="edit"
+                                      size={24}
+                                      color="#1D4ED8"
+                                    />
+                                  </TouchableOpacity>
+                                  <TouchableOpacity
+                                    onPress={() => setEditingStudentId(null)}
+                                    className="p-2 rounded-lg"
+                                  >
+                                    <MaterialIcons
+                                      name="cancel"
+                                      size={24}
+                                      color="#D1D5DB"
+                                    />
+                                  </TouchableOpacity>
+                                </View>
+                              </View>
+                            </View>
+                          ) : (
+                            <View className="flex-row items-center justify-between shadow-2xl">
+                              <View className="w-1/2">
+                                <Text className="text-gray-800 font-semibold text-base">
+                                  {student.name}
+                                </Text>
+                                <Text className="text-sm text-gray-600">
+                                  अभिभावक: {student.parent_id.name}
+                                </Text>
+                              </View>
+                              <View className="flex-row items-center justify-between w-1/2">
+                                <Text className="text-gray-800 font-semibold text-base">
+                                  {student.lastResult}/100
+                                </Text>
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    setEditingStudentId(student?._id);
+                                    setEditMarks(
+                                      student.lastResult === "कोई डेटा नहीं"
+                                        ? ""
+                                        : student.lastResult
+                                    );
+                                  }}
+                                >
+                                  <FontAwesome6
+                                    name="edit"
+                                    size={24}
+                                    color="#1D4ED8"
+                                  />
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          )}
+                        </View>
+                      );
+                    })}
+                  </View>
+                )
+              )}
+
+              {isAddingNew && (
+                <View className="flex-row justify-between mt-4 mb-8">
+                  <TouchableOpacity
+                    onPress={handleAddNewResults}
+                    className="flex-1 mr-2"
+                  >
+                    <LinearGradient
+                      colors={["#2563EB", "#1D4ED8"]}
+                      className="rounded-lg p-4"
+                    >
+                      <Text className="text-white text-center font-bold text-lg">
+                        जमा करें
+                      </Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsAddingNew(false);
+                      setNewResults({});
+                    }}
+                    className="flex-1 ml-2 bg-gray-200 rounded-lg p-4"
+                  >
+                    <Text className="text-center font-bold text-lg text-gray-700">
+                      रद्द करें
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </>
           )}
         </ScrollView>
       </KeyboardAvoidingView>

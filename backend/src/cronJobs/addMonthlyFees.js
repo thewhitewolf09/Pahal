@@ -116,6 +116,6 @@ const addOrUpdateMonthlyFees = async () => {
 };
 
 // Schedule the cron job to run daily at midnight local time
-cron.schedule("0 0 * * *", () => {
+cron.schedule("* * * * * *", () => {
   addOrUpdateMonthlyFees();
 });

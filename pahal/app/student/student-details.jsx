@@ -46,7 +46,6 @@ const StudentDetail = () => {
       }
     } catch (error) {
       console.error("Error fetching student:", error.message || error);
-      alert("छात्र विवरण प्राप्त करने में समस्या हुई। कृपया पुनः प्रयास करें।");
     }
   };
 
@@ -56,7 +55,6 @@ const StudentDetail = () => {
       await dispatch(fetchPerformanceByStudent(studentId)).unwrap();
     } catch (error) {
       console.error("Error fetching related data:", error.message || error);
-      alert("डेटा प्राप्त करने में समस्या हुई। कृपया पुनः प्रयास करें।");
     }
   };
 

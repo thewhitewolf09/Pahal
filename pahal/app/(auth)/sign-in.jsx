@@ -48,117 +48,101 @@ const SignIn = () => {
       Alert.alert("त्रुटि", error || "लॉगिन विफल रहा।");
     }
   };
-  
 
   return (
     <SafeAreaView className="bg-white h-full">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
-      >
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
+      <ScrollView>
+        <View
+          className="w-full flex justify-center h-full px-4 my-6"
+          style={{
+            minHeight: Dimensions.get("window").height - 100,
           }}
         >
-          <View
-            className="w-full flex justify-center h-full px-4 my-6"
-            style={{
-              minHeight: Dimensions.get("window").height - 100,
-            }}
-          >
-            {/* App Logo */}
-            <Image
-              source={images.logo}
-              className="w-[220px] h-[95px] self-center"
-              resizeMode="contain"
-            />
+          {/* App Logo */}
+          <Image
+            source={images.logo}
+            className="w-[220px] h-[95px] self-center"
+            resizeMode="contain"
+          />
 
-            {/* Illustration */}
-            <Image
-              source={images.institute}
-              className="max-w-[380px] w-full h-[298px]"
-              resizeMode="contain"
-            />
+          {/* Illustration */}
+          <Image
+            source={images.institute}
+            className="max-w-[380px] w-full h-[298px]"
+            resizeMode="contain"
+          />
 
-            {/* Login Title */}
-            <Text className="text-2xl font-semibold text-black font-psemibold">
-              लॉग इन करें
-            </Text>
+          {/* Login Title */}
+          <Text className="text-2xl font-semibold text-black font-psemibold">
+            लॉग इन करें
+          </Text>
 
-            {/* Mobile Number Input */}
+          {/* Mobile Number Input */}
+          <FormField
+            title="मोबाइल नंबर"
+            value={form.mobileNumber}
+            handleChangeText={(e) => setForm({ ...form, mobileNumber: e })}
+            otherStyles="mt-7"
+            keyboardType="phone-pad"
+            placeholder="अपना मोबाइल नंबर दर्ज करें"
+          />
+
+          {/* Conditional Password Input */}
+          {form.role === "admin" && (
             <FormField
-              title="मोबाइल नंबर"
-              value={form.mobileNumber}
-              handleChangeText={(e) => setForm({ ...form, mobileNumber: e })}
-              otherStyles="mt-7"
-              keyboardType="phone-pad"
-              placeholder="अपना मोबाइल नंबर दर्ज करें"
+              title="पासवर्ड"
+              value={form.password}
+              handleChangeText={(e) => setForm({ ...form, password: e })}
+              otherStyles="mt-4"
+              isPassword={true}
+              placeholder="अपना पासवर्ड दर्ज करें"
             />
+          )}
 
-            {/* Conditional Password Input */}
-            {form.role === "admin" && (
-              <FormField
-                title="पासवर्ड"
-                value={form.password}
-                handleChangeText={(e) => setForm({ ...form, password: e })}
-                otherStyles="mt-4"
-                isPassword={true}
-                placeholder="अपना पासवर्ड दर्ज करें"
-              />
-            )}
+          {/* Submit Button */}
+          <CustomButton
+            title={"सबमिट करें"}
+            handlePress={handleSubmit}
+            containerStyles="mt-7"
+            isLoading={loading}
+          />
 
-            {/* Submit Button */}
-            <CustomButton
-              title={"सबमिट करें"}
-              handlePress={handleSubmit}
-              containerStyles="mt-7"
-              isLoading={loading}
-            />
-
-            {/* Sign-Up Suggestion */}
-            <View className="flex justify-center pt-5 flex-row gap-2">
-              <Text className="text-lg text-gray-100 font-pregular">
-                क्या आपके पास खाता नहीं है?
+          {/* Sign-Up Suggestion */}
+          <View className="flex justify-center pt-5 flex-row gap-2">
+            <Text className="text-lg text-gray-100 font-pregular">
+              क्या आपके पास खाता नहीं है?
+            </Text>
+            <TouchableOpacity
+              onPress={() =>
+                Alert.alert("एडमिन से संपर्क करें", "फ़ोन नंबर: +91 7827374161")
+              }
+            >
+              <Text className="text-lg font-psemibold text-blue-600">
+                साइन अप करें
               </Text>
-              <TouchableOpacity
-                onPress={() =>
-                  Alert.alert(
-                    "एडमिन से संपर्क करें",
-                    "फ़ोन नंबर: +91 7827374161"
-                  )
-                }
-              >
-                <Text className="text-lg font-psemibold text-blue-600">
-                  साइन अप करें
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Role Selection */}
-            <View className="flex justify-center items-center mt-6 flex-row gap-2">
-              <TouchableOpacity
-                onPress={() =>
-                  setForm({
-                    ...form,
-                    role: form.role === "parent" ? "admin" : "parent",
-                  })
-                }
-              >
-                <Text className="text-lg font-psemibold text-gray-600">
-                  {form.role === "parent" ? "मैं एक हूँ " : "मैं एक हूँ "}
-                  <Text className="font-semibold underline text-blue-600">
-                    {form.role === "parent" ? "एडमिन" : "पैरेंट"}
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+
+          {/* Role Selection */}
+          <View className="flex justify-center items-center mt-6 flex-row gap-2">
+            <TouchableOpacity
+              onPress={() =>
+                setForm({
+                  ...form,
+                  role: form.role === "parent" ? "admin" : "parent",
+                })
+              }
+            >
+              <Text className="text-lg font-psemibold text-gray-600">
+                {form.role === "parent" ? "मैं एक हूँ " : "मैं एक हूँ "}
+                <Text className="font-semibold underline text-blue-600">
+                  {form.role === "parent" ? "एडमिन" : "पैरेंट"}
+                </Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

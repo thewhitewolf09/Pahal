@@ -9,7 +9,7 @@ const TabIcon = ({ iconName, color, name, focused }) => {
   return (
     <View style={{ alignItems: "center", justifyContent: "center", gap: 1 ,width : 40}}>
       {/* Use the Ionicons icon with vector icons */}
-      <Icon name={iconName} size={30} color={color} style={{ opacity: 1 }} />
+      <Icon name={iconName} size={24} color={color} style={{ opacity: 1 }} />
       {/* Text component for the label */}
       <Text
         style={{

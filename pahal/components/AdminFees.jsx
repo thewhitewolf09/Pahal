@@ -216,6 +216,14 @@ const AdminFees = () => {
             );
           }}
         />
+
+        {students.length === 0 ? (
+          <View className="flex justify-center items-center mt-10">
+            <Text className="text-gray-500 text-lg">कोई छात्र उपलब्ध नहीं</Text>
+          </View>
+        ) : null}
+
+        
       </ScrollView>
     </SafeAreaView>
   );
