@@ -2,15 +2,13 @@ import cron from "node-cron";
 import Fees from "../models/fees.js";
 import Student from "../models/student.js";
 
-// Utility to calculate the due date
 const calculateDueDate = (year, month) => {
   const date = new Date(year, month, 30); // 30th of the month
   return date.toISOString().split("T")[0];
 };
 
-// Function to calculate the fee based on the student's joining month and other conditions
 const calculateFeesForStudent = (student, changeDate) => {
-  const joiningDate = new Date(student.joining_date);
+  const joiningDate = new Date(student.createdAt);
   const currentDate = changeDate || new Date();
   const diffInTime = currentDate - joiningDate;
   const diffInDays = diffInTime / (1000 * 3600 * 24);
@@ -81,29 +79,18 @@ const addOrUpdateMonthlyFees = async () => {
       } else {
         // Check if the transport or accommodation status changed
         const feeNeedsUpdate =
-          student.transport !== existingFee.transport ||
-          student.accommodation !== existingFee.accommodation;
+          (student.transport && existingFee.amount !== totalFees) ||
+          (student.accommodation && existingFee.amount !== totalFees);
 
         if (feeNeedsUpdate) {
-          console.log(
-            `Updating fee for student ${student._id} due to status change.`
-          );
-
-          // Use the date of change (actual implementation depends on tracking)
-          const changeDate = new Date(); // Replace with the actual change date if available
+          const changeDate = new Date();
 
           // Recalculate the fee for the updated status
           const updatedFee = calculateFeesForStudent(student, changeDate);
 
           // Update the fee record
           existingFee.amount = updatedFee;
-          existingFee.transport = student.transport;
-          existingFee.accommodation = student.accommodation;
-
           await existingFee.save();
-          console.log(
-            `Fee updated for student ${student._id} to ${updatedFee} on ${previousMonthDueDate}.`
-          );
         }
       }
     }
