@@ -31,6 +31,9 @@ const FeesSchema = new mongoose.Schema(
   }
 );
 
+// Ensure unique combination of student_id and due_date
+FeesSchema.index({ student_id: 1, due_date: 1 }, { unique: true });
+
 const Fees = mongoose.model("Fees", FeesSchema);
 
 export default Fees;

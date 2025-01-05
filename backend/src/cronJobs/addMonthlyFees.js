@@ -15,7 +15,6 @@ const calculateDueDate = (year, month) => {
   return dueDate.toISOString().split("T")[0];
 };
 
-
 const calculateFeesForStudent = (student, changeDate) => {
   const joiningDate = new Date(student.createdAt);
   const currentDate = changeDate || new Date();
@@ -48,8 +47,13 @@ const calculateFeesForStudent = (student, changeDate) => {
   return totalFees;
 };
 
+let isProcessing = false;
+
 // Function to add or update fees for the previous month
 const addOrUpdateMonthlyFees = async () => {
+  if (isProcessing) return;
+  isProcessing = true;
+
   try {
     const students = await Student.find(); // Get all students
 
@@ -72,19 +76,28 @@ const addOrUpdateMonthlyFees = async () => {
       // If the transport or accommodation status changed mid-month, update the fees
       const existingFee = await Fees.findOne({
         student_id: student._id,
-        due_date: previousMonthDueDate, // Compare the formatted due date
+        due_date: previousMonthDueDate,
       });
 
       if (!existingFee) {
-        // Create new fee record if one doesn't exist
-        await Fees.create({
-          student_id: student._id,
-          amount: totalFees,
-          status: "Pending",
-          due_date: previousMonthDueDate,
-          payment_date: null,
-          transaction_id: null,
-        });
+        try {
+          await Fees.create({
+            student_id: student._id,
+            amount: totalFees,
+            status: "Pending",
+            due_date: previousMonthDueDate,
+            payment_date: null,
+            transaction_id: null,
+          });
+        } catch (error) {
+          if (error.code === 11000) {
+            console.warn(
+              `Duplicate fee entry detected for student ${student._id}`
+            );
+          } else {
+            throw error;
+          }
+        }
       } else {
         // Check if the transport or accommodation status changed
         const feeNeedsUpdate =
@@ -108,6 +121,8 @@ const addOrUpdateMonthlyFees = async () => {
       "Error while adding or updating monthly fees:",
       error.message
     );
+  } finally {
+    isProcessing = false;
   }
 };
 
