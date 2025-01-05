@@ -47,13 +47,8 @@ const calculateFeesForStudent = (student, changeDate) => {
   return totalFees;
 };
 
-let isProcessing = false;
-
 // Function to add or update fees for the previous month
 const addOrUpdateMonthlyFees = async () => {
-  if (isProcessing) return;
-  isProcessing = true;
-
   try {
     const students = await Student.find(); // Get all students
 
@@ -121,8 +116,6 @@ const addOrUpdateMonthlyFees = async () => {
       "Error while adding or updating monthly fees:",
       error.message
     );
-  } finally {
-    isProcessing = false;
   }
 };
 
