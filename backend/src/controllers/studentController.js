@@ -106,10 +106,14 @@ export const deleteStudent = async (req, res) => {
   const { id } = req.params;
 
   try {
+    // Find and delete the student
     const student = await Student.findByIdAndDelete(id);
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
+
+    // Delete fees associated with the student
+    await Fees.deleteMany({ student_id: id });
 
     // Optionally, remove the student ID from parent's children_ids
     const parent = await Parent.findById(student.parent_id);
@@ -120,10 +124,14 @@ export const deleteStudent = async (req, res) => {
       await parent.save();
     }
 
-    res.status(200).json({ message: "Student deleted successfully" });
+    res.status(200).json({
+      message: "Student and associated fees deleted successfully",
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to delete student", error: error.message });
+    res.status(500).json({
+      message: "Failed to delete student",
+      error: error.message,
+    });
   }
 };
+
