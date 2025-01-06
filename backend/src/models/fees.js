@@ -25,6 +25,14 @@ const FeesSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    accommodation: {
+      type: Boolean,
+      default: false,
+    },
+    transport: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
