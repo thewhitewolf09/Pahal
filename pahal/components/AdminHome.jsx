@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import { useState, useEffect } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useState, useEffect, useCallback } from "react";
 import { Loader } from ".";
 import { images } from "../constants";
 import { fetchAllStudents } from "../redux/slices/studentsSlice";
@@ -31,18 +31,17 @@ const AdminHome = () => {
     router.push("/student/add-student");
   };
 
-  const postAnnouncement = () => {
-    router.push("/post-announcement");
-  };
-
   const fetchData = async () => {
     await dispatch(fetchAllStudents());
     setWeeklyPerformance([5000, 7000, 8000, 12000]);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -69,7 +68,6 @@ const AdminHome = () => {
                 {user?.name}
               </Text>
             </View>
-        
           </View>
 
           <Image
@@ -88,7 +86,7 @@ const AdminHome = () => {
                   संस्थान का नाम:{" "}
                 </Text>
                 <Text className="text-lg text-gray-800 ml-2 flex-wrap max-w-[65%]">
-                श्‍वेता नवोदय प्रवेश संस्थान
+                  श्‍वेता नवोदय प्रवेश संस्थान
                 </Text>
               </View>
               <View className="flex flex-row flex-wrap items-center">
@@ -152,11 +150,6 @@ const AdminHome = () => {
               colors={["#1D4ED8", "#2563EB"]} // Blue shades for gradient
               onPress={manageStudents}
             />
-            {/* <ActionButton
-              title="घोषणा पोस्ट करें"
-              colors={["#1D4ED8", "#2563EB"]} // Blue shades for gradient
-              onPress={postAnnouncement}
-            /> */}
           </View>
         </View>
       </ScrollView>

@@ -18,7 +18,7 @@ const calculateFeesForStudent = (student) => {
     totalFees += 600; // Transport fee
   }
   if (student.accommodation) {
-    totalFees += 2500; // Accommodation fee
+    totalFees += 2400; // Accommodation fee
   }
 
   return totalFees;
