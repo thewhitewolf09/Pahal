@@ -19,9 +19,8 @@ const AdminHome = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { students } = useSelector((state) => state.student);
-  const { attendanceRecords } = useSelector((state) => state.attendance);
+  const { attendanceByDate } = useSelector((state) => state.attendance);
   const [refreshing, setRefreshing] = useState(false);
-  const [weeklyPerformance, setWeeklyPerformance] = useState([0, 0, 0, 0]);
 
   const manageParent = () => {
     router.push("/parent/add-parent");
@@ -33,7 +32,6 @@ const AdminHome = () => {
 
   const fetchData = async () => {
     await dispatch(fetchAllStudents());
-    setWeeklyPerformance([5000, 7000, 8000, 12000]);
   };
 
 
@@ -118,7 +116,7 @@ const AdminHome = () => {
               <StatCard
                 title="उपस्थित छात्र"
                 value={
-                  attendanceRecords.filter(
+                  attendanceByDate.filter(
                     (attendance) => attendance.status === "Present"
                   ).length
                 }

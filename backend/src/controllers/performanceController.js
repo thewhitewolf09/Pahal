@@ -4,13 +4,13 @@ import Performance from "../models/performance.js";
 export const addPerformance = async (req, res) => {
   const { student_id, marks } = req.body;
 
-
-  const today = new Date();
+  // Get today's date and format it to YYYY-MM-DD
+  const today = new Date().toISOString().split('T')[0];
 
   try {
     const performance = new Performance({
       student_id,
-      test_date: today,
+      test_date: today, // Store only the date part
       marks,
     });
 

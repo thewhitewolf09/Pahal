@@ -16,7 +16,6 @@ import paymentReducer from "./slices/paymentSlice"
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["user"],
 };
 
 // Combine reducers
