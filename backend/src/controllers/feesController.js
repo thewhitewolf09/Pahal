@@ -120,6 +120,39 @@ export const updateFeeStatus = async (req, res) => {
   }
 };
 
+// Edit Latest Fee of a Student
+export const editFee = async (req, res) => {
+  const { student_id } = req.params;
+  const { amount } = req.body;
+
+  try {
+    // Find the latest fee record for the student (sorted by due_date in descending order)
+    const latestFee = await Fees.findOne({ student_id })
+      .sort({ due_date: -1 });
+
+    if (!latestFee) {
+      return res.status(404).json({ message: "No fee record found for this student" });
+    }
+
+    // Update the fee amount if provided
+    if (amount) {
+      latestFee.amount = amount;
+    }
+
+    await latestFee.save();
+
+    res.status(200).json({
+      message: "Latest fee updated successfully",
+      fee: latestFee,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update fee",
+      error: error.message,
+    });
+  }
+};
+
 // Delete Fee Record
 export const deleteFee = async (req, res) => {
   const { id } = req.params;

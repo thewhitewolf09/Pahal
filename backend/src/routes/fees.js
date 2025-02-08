@@ -7,6 +7,7 @@ import {
   getPendingFees,
   getFeesByParent,
   getMonthlyFeesSummary,
+  editFee,
 } from "../controllers/feesController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 
@@ -26,6 +27,9 @@ router.get("/",protect, getAllFees);
 
 // Get Fees by Student ID
 router.get("/:parentId",protect, getFeesByParent);
+
+// Update Fee Record of a student
+router.put("/update/:student_id", editFee);
 
 // Update Fee Status (Paid)
 router.patch("/:id",protect, updateFeeStatus);

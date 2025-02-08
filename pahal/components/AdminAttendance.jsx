@@ -243,7 +243,7 @@ const AdminAttendance = () => {
         )}
 
         {/* Save Button */}
-        {isToday(selectedDate.date) && students.length > 0 && (
+        { students.length > 0 && (
           <View className="flex items-center mt-5">
             <LinearGradient
               colors={["#2563EB", "#1D4ED8"]}
