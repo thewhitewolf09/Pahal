@@ -61,7 +61,6 @@ export const fetchFeesByParent = createAsyncThunk(
         },
       });
 
-      
       return response.data.fees;
     } catch (error) {
       const errorMessage =
@@ -92,6 +91,34 @@ export const updateFeeStatus = createAsyncThunk(
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to update fee status.";
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+// Edit Latest Fee
+export const editFee = createAsyncThunk(
+  "fees/edit",
+  async ({ student_id, amount }, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = getToken(state);
+
+    try {
+      const response = await api.patch(
+        `/api/fees/edit/${student_id}`, // Ensure this matches your backend route
+        { amount },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data.fee);
+      return response.data.fee;
+    } catch (error) {
+      console.log(error);
+      const errorMessage =
+        error.response?.data?.message || "Failed to update fee.";
       return rejectWithValue(errorMessage);
     }
   }
@@ -157,7 +184,8 @@ export const fetchMonthlyFeesSummary = createAsyncThunk(
       return response.data.summary;
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message || "Failed to fetch monthly fees summary.";
+        error.response?.data?.message ||
+        "Failed to fetch monthly fees summary.";
       return rejectWithValue(errorMessage);
     }
   }
@@ -242,6 +270,24 @@ const feesSlice = createSlice({
         state.error = action.payload;
       })
 
+      // Update Fee Record
+      .addCase(editFee.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(editFee.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.feesRecords.findIndex(
+          (record) => record._id === action.payload._id
+        ); 
+        if (index !== -1) {
+          state.feesRecords[index] = action.payload;
+        }
+      })
+      .addCase(editFee.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       // Delete Fee Record
       .addCase(deleteFee.pending, (state) => {
         state.loading = true;

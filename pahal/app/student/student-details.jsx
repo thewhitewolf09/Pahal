@@ -19,7 +19,7 @@ import {
   deleteStudent,
   fetchStudentById,
 } from "../../redux/slices/studentsSlice";
-import { fetchFeesByParent } from "../../redux/slices/feesSlice";
+import { editFee, fetchFeesByParent } from "../../redux/slices/feesSlice";
 import { fetchAttendanceByStudent } from "../../redux/slices/attendanceSlice";
 import { fetchPerformanceByStudent } from "../../redux/slices/performanceSlice";
 
@@ -37,6 +37,8 @@ const StudentDetail = () => {
 
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteConfirmationName, setDeleteConfirmationName] = useState("");
+
+  const [manualFee, setManualFee] = useState("");
 
   const fetchStudent = async () => {
     try {
@@ -133,6 +135,33 @@ const StudentDetail = () => {
       }
     } else {
       alert("आपके द्वारा दिया गया नाम गलत है।");
+    }
+  };
+
+  const handleFeeUpdate = async () => {
+    if (!manualFee) {
+      alert("कृपया वैध फीस राशि दर्ज करें.");
+      return;
+    }
+
+    try {
+      // Dispatch editFee with studentId and the new amount
+      await dispatch(
+        editFee({ student_id: studentId, amount: manualFee })
+      ).unwrap();
+
+      alert("फीस सफलतापूर्वक अपडेट किया गया!");
+
+      // Optionally clear the input
+      setManualFee("");
+
+      // Re-fetch the fees data to show updated fee
+      if (student?.parent_id?._id) {
+        await fetchRelatedData(student.parent_id._id);
+      }
+    } catch (error) {
+      console.log(error)
+      alert(error || "फीस अपडेट करने में विफल.");
     }
   };
 
@@ -266,6 +295,31 @@ const StudentDetail = () => {
               todayTextColor: "#2563EB",
             }}
           />
+        </View>
+
+        <View className="px-4 py-6 space-y-4">
+          <Text className="text-lg font-semibold text-blue-700 mb-2">
+             नया मासिक फीस सेट करें
+          </Text>
+          <View>
+            <TextInput
+              className="border border-gray-300 p-2 rounded mb-4"
+              placeholder="नया फीस दर्ज करें"
+              value={manualFee}
+              onChangeText={(value) =>
+                setManualFee(value.replace(/[^0-9]/g, ""))
+              }
+              keyboardType="numeric"
+            />
+            <TouchableOpacity
+              onPress={handleFeeUpdate}
+              className="bg-blue-600 p-3 rounded-lg"
+            >
+              <Text className="text-white text-center font-semibold">
+              फीस अपडेट करें
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View className="px-4 py-6 space-y-4">

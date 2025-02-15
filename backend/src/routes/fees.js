@@ -17,26 +17,24 @@ const router = express.Router();
 router.post("/", protect, addFee);
 
 // Get Pending Fees (for reminders)
-router.get("/pending",protect, getPendingFees);
+router.get("/pending", protect, getPendingFees);
 
 // Get Monthly Fees Summary
-router.get("/summery/monthly",getMonthlyFeesSummary);
+router.get("/summery/monthly", getMonthlyFeesSummary);
 
 // Get All Fees
-router.get("/",protect, getAllFees);
+router.get("/", protect, getAllFees);
 
 // Get Fees by Student ID
-router.get("/:parentId",protect, getFeesByParent);
+router.get("/:parentId", protect, getFeesByParent);
 
 // Update Fee Record of a student
-router.put("/update/:student_id", editFee);
+router.put("/update/:student_id", protect, editFee);
 
 // Update Fee Status (Paid)
-router.patch("/:id",protect, updateFeeStatus);
- 
+router.patch("/:id", protect, updateFeeStatus);
+
 // Delete Fee Record
-router.delete("/:id",protect, deleteFee);
-
-
+router.delete("/:id", protect, deleteFee);
 
 export default router;
