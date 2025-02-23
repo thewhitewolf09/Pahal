@@ -3,11 +3,22 @@ import Fees from "../models/fees.js";
 import Student from "../models/student.js";
 
 const calculateDueDate = (year, month) => {
-  const date = new Date(year, month + 1, 0); // Last day of the previous month
-  const lastDay = date.getDate();
-  const dueDay = Math.min(30, lastDay); // Choose 30th if it exists, otherwise last day
-  const dueDate = new Date(year, month, dueDay);
-  return dueDate.toISOString().split("T")[0];
+  // Previous month calculation
+  let prevMonth = month - 1;
+  let prevYear = year;
+
+  if (prevMonth < 0) {
+    prevMonth = 11; // December of previous year
+    prevYear--;
+  }
+
+  const prevMonthLastDay = new Date(prevYear, prevMonth + 1, 0).getDate(); // Last day of previous month
+  
+  // If previous month is February, use its last day, else use 30th
+  const dueDay = prevMonth === 1 ? prevMonthLastDay : 30; 
+  const dueDate = new Date(prevYear, prevMonth, dueDay);
+
+  return dueDate.toISOString().split("T")[0]; // Return YYYY-MM-DD format
 };
 
 const calculateFeesForStudent = (student) => {
@@ -18,7 +29,7 @@ const calculateFeesForStudent = (student) => {
     totalFees += 600; // Transport fee
   }
   if (student.accommodation) {
-    totalFees += 2400; // Accommodation fee
+    totalFees += 2500; // Accommodation fee
   }
 
   return totalFees;

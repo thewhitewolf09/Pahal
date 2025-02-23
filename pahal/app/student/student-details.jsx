@@ -160,7 +160,7 @@ const StudentDetail = () => {
         await fetchRelatedData(student.parent_id._id);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       alert(error || "फीस अपडेट करने में विफल.");
     }
   };
@@ -299,7 +299,7 @@ const StudentDetail = () => {
 
         <View className="px-4 py-6 space-y-4">
           <Text className="text-lg font-semibold text-blue-700 mb-2">
-             नया मासिक फीस सेट करें
+            नया मासिक फीस सेट करें
           </Text>
           <View>
             <TextInput
@@ -316,7 +316,7 @@ const StudentDetail = () => {
               className="bg-blue-600 p-3 rounded-lg"
             >
               <Text className="text-white text-center font-semibold">
-              फीस अपडेट करें
+                फीस अपडेट करें
               </Text>
             </TouchableOpacity>
           </View>
@@ -409,9 +409,9 @@ const StudentDetail = () => {
                     <Text className="flex-1 text-center py-2 text-gray-800">
                       {fee.due_date
                         ? new Date(
-                            new Date(fee.due_date).setMonth(
-                              new Date(fee.due_date).getMonth() + 1
-                            )
+                            new Date(fee.due_date).getFullYear(),
+                            new Date(fee.due_date).getMonth() + 1, // Move to the next month
+                            1 // Set the day to the 1st to avoid date overflow issues
                           ).toLocaleString("hi-IN", { month: "long" })
                         : "N/A"}
                     </Text>

@@ -104,8 +104,8 @@ export const editFee = createAsyncThunk(
     const token = getToken(state);
 
     try {
-      const response = await api.patch(
-        `/api/fees/edit/${student_id}`, // Ensure this matches your backend route
+      const response = await api.put(
+        `/api/fees/update/${student_id}`, // Ensure this matches your backend route
         { amount },
         {
           headers: {
@@ -117,6 +117,7 @@ export const editFee = createAsyncThunk(
       return response.data.fee;
     } catch (error) {
       console.log(error);
+      console.log(error.response.data);
       const errorMessage =
         error.response?.data?.message || "Failed to update fee.";
       return rejectWithValue(errorMessage);
