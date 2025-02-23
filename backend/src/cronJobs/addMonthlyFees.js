@@ -98,6 +98,13 @@ const addOrUpdateMonthlyFees = async () => {
 };
 
 // Schedule the cron job to run every 10 seconds
-cron.schedule("* * * * * *", () => {
-  addOrUpdateMonthlyFees();
+cron.schedule("* * * * * *", async () => {
+  try {
+    console.log("Running cron job: addOrUpdateMonthlyFees");
+    await addOrUpdateMonthlyFees();
+    console.log("Cron job completed successfully.");
+  } catch (error) {
+    console.error("Cron job error:", error.message);
+  }
 });
+
