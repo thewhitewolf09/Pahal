@@ -2,23 +2,15 @@ import cron from "node-cron";
 import Fees from "../models/fees.js";
 import Student from "../models/student.js";
 
-const calculateDueDate = (year, month) => {
-  // Previous month calculation
-  let prevMonth = month - 1;
-  let prevYear = year;
+const calculateDueDate = (prevMonthsYear, prevMonth) => {
+  const lastDayOfPrevMonth = new Date(prevMonthsYear, prevMonth + 1, 0).getDate(); // Last day of the previous month
 
-  if (prevMonth < 0) {
-    prevMonth = 11; // December of previous year
-    prevYear--;
-  }
-
-  const prevMonthLastDay = new Date(prevYear, prevMonth + 1, 0).getDate(); // Last day of previous month
+  const dueDay = prevMonth === 1 ? lastDayOfPrevMonth : 30; 
+  const dueDate = new Date(prevMonthsYear, prevMonth, dueDay);
   
-  // If previous month is February, use its last day, else use 30th
-  const dueDay = prevMonth === 1 ? prevMonthLastDay : 30; 
-  const dueDate = new Date(prevYear, prevMonth, dueDay);
-
-  return dueDate.toISOString().split("T")[0]; // Return YYYY-MM-DD format
+  // Convert to YYYY-MM-DD in local time
+  const formattedDate = dueDate.toLocaleDateString('en-CA'); // 'en-CA' gives YYYY-MM-DD format
+  return formattedDate; // Return in local time YYYY-MM-DD format
 };
 
 const calculateFeesForStudent = (student) => {
@@ -46,6 +38,7 @@ const addOrUpdateMonthlyFees = async () => {
     const previousMonth = currentMonth - 1;
     const previousMonthYear = previousMonth < 0 ? currentYear - 1 : currentYear;
     const previousMonthIndex = previousMonth < 0 ? 11 : previousMonth;
+    
     const previousMonthDueDate = calculateDueDate(
       previousMonthYear,
       previousMonthIndex
